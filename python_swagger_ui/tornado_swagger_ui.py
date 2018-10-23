@@ -1,0 +1,24 @@
+from tornado.web import RequestHandler, StaticFileHandler
+from . import utils
+
+
+def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
+
+    class SwaggerIndexHandler(RequestHandler):
+
+        def get(self, *args, **kwargs):
+            swagger_url_prefix = self.request.full_url()
+            if swagger_url_prefix.endswith('/'):
+                swagger_url_prefix = swagger_url_prefix[:-1]
+            return self.write(utils.render_html(url_prefix=swagger_url_prefix, title=title))
+
+    class SwaggerConfigHandler(RequestHandler):
+
+        def get(self, *args, **kwargs):
+            return self.write(utils.load_swagger_config(config_path=config_path,
+                                                        host=self.request.host))
+
+    handlers = [(url_prefix, SwaggerIndexHandler),
+                (r'%s/swagger.json' % url_prefix, SwaggerConfigHandler),
+                (r'%s/(.+)' % url_prefix, StaticFileHandler, {'path': utils.get_static_dir()})]
+    app.add_handlers('.*', handlers)

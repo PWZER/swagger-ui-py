@@ -1,0 +1,26 @@
+swagger: '2.0'
+host: '127.0.0.1:8000'
+schemes:
+  - http
+basePath: /
+info:
+  version: 1.0.0
+  title: python-swagger-ui test api
+  description: python-swagger-ui test api
+tags:
+  - name: default
+    description: default tag
+
+paths:
+  /hello/world:
+    get:
+      summary: output hello world.
+      produces:
+        - application/text
+      responses:
+        '200':
+          description: OK
+          schema:
+            example: "Hello World!!!"
+      tags:
+        - default
