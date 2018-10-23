@@ -1,25 +1,14 @@
 import os
 import sys
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
-def load_data_files():
-    data_files = [('swagger_ui', ['swagger_ui/update-swagger-ui.sh'])]
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
-
-    static_dir = 'swagger_ui/static'
-    static_files = []
-    for file_name in os.listdir(os.path.join(cur_dir, static_dir)):
-        static_files.append(static_dir + '/' + file_name)
-    data_files.append((static_dir, static_files))
-
-    templates_dir = 'swagger_ui/templates'
-    templates_files = []
-    for file_name in os.listdir(os.path.join(cur_dir, templates_dir)):
-        templates_files.append(templates_dir + '/' + file_name)
-    data_files.append((templates_dir, templates_files))
-
-    return data_files
+def load_package_data():
+    package_data = []
+    for data_dir in ['static', 'templates']:
+        for file_name in os.listdir(os.path.join(cur_dir, 'swagger_ui', data_dir)):
+            package_data.append(data_dir + '/' + file_name)
+    return {'swagger_ui': package_data}
 
 
 def readme():
@@ -28,14 +17,12 @@ def readme():
 
 
 if __name__ == '__main__':
-    py_modules = [
-        'swagger_ui.utils',
-        'swagger_ui.flask_swagger_ui',
-        'swagger_ui.tornado_swagger_ui',
-    ]
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
 
-    if sys.version_info >= (3, 0):
-        py_modules.append('swagger_ui.sanic_swagger_ui')
+    sanic_module_path = os.path.join(cur_dir, 'swagger_ui/sanic_swagger_ui.py')
+    if sys.version_info < (3, 0):
+        # Sanic not suport Python2
+        os.rename(sanic_module_path, sanic_module_path + '.bak')
 
     setup(
         name='swagger-ui-py',
@@ -44,10 +31,13 @@ if __name__ == '__main__':
         long_description=readme(),
         long_description_content_type='text/markdown',
         license='Apache License 2.0',
-        py_modules=py_modules,
-        data_files=load_data_files(),
-        # include_package_data=False,
+        packages=find_packages(),
+        package_data=load_package_data(),
+        install_requires=['Jinja2>=2.0', 'PyYAML>=2.0'],
         url='https://github.com/PWZER/swagger-ui-py',
         author='PWZER',
         author_email='pwzergo@gmail.com',
     )
+
+    if sys.version_info < (3, 0):
+        os.rename(sanic_module_path + '.bak', sanic_module_path)
