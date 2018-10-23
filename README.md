@@ -1,4 +1,4 @@
-# python-swagger-ui
+# PythonSwaggerUi
 Swagger UI for Python web framework, such Tornado, Flask and Sanic.
 
 ## Swagger UI
