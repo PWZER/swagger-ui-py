@@ -1,8 +1,8 @@
-from tornado.web import RequestHandler, StaticFileHandler
 from . import utils
 
 
 def api_doc(app, config_path, url_prefix=r'/api/doc', title='API doc'):
+    from tornado.web import RequestHandler, StaticFileHandler
 
     class SwaggerIndexHandler(RequestHandler):
 

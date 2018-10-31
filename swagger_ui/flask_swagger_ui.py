@@ -1,9 +1,10 @@
-from flask import request
-from flask.blueprints import Blueprint
 from . import utils
 
 
 def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
+    from flask import request
+    from flask.blueprints import Blueprint
+
     swagger_blueprint = Blueprint('swagger_blueprint', __name__, url_prefix=url_prefix,
                                   static_folder=utils.get_static_dir(), static_url_path='/')
 

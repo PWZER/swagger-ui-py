@@ -1,9 +1,10 @@
-from sanic import response
-from sanic.blueprints import Blueprint
 from . import utils
 
 
 def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
+    from sanic import response
+    from sanic.blueprints import Blueprint
+
     swagger_blueprint = Blueprint('swagger_blueprint', url_prefix=url_prefix)
 
     @swagger_blueprint.get('/')
