@@ -10,8 +10,8 @@ def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
 
     @swagger_blueprint.route(r'/')
     def swagger_blueprint_index_handler():
-        swagger_url_prefix = request.url[:-1] if request.url.endswith('/') else request.url
-        return utils.render_html(url_prefix=swagger_url_prefix, title=title)
+        # swagger_url_prefix = request.url[:-1] if request.url.endswith('/') else request.url
+        return utils.render_html(url_prefix=url_prefix, title=title)
 
     @swagger_blueprint.route(r'/swagger.json')
     def swagger_blueprint_config_handler():

@@ -9,8 +9,8 @@ def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
 
     @swagger_blueprint.get('/')
     async def swagger_blueprint_index_handler(request):
-        swagger_url_prefix = request.url[:-1] if request.url.endswith('/') else request.url
-        return response.html(utils.render_html(url_prefix=swagger_url_prefix, title=title))
+        # swagger_url_prefix = request.url[:-1] if request.url.endswith('/') else request.url
+        return response.html(utils.render_html(url_prefix=url_prefix, title=title))
 
     @swagger_blueprint.get('/swagger.json')
     async def swagger_blueprint_config_handler(request):
