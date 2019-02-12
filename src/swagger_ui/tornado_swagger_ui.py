@@ -7,9 +7,6 @@ def api_doc(app, config_path, url_prefix=r'/api/doc', title='API doc'):
     class SwaggerIndexHandler(RequestHandler):
 
         def get(self, *args, **kwargs):
-            # swagger_url_prefix = self.request.full_url()
-            # if swagger_url_prefix.endswith('/'):
-            #     swagger_url_prefix = swagger_url_prefix[:-1]
             return self.write(utils.render_html(url_prefix=url_prefix, title=title))
 
     class SwaggerConfigHandler(RequestHandler):

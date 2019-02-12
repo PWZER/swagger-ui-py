@@ -1,5 +1,5 @@
 # swagger-ui-py
-Swagger UI for Python web framework, such Tornado, Flask and Sanic.
+Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.
 
 ## Swagger UI
 
@@ -27,6 +27,10 @@ Swagger UI for Python web framework, such Tornado, Flask and Sanic.
   # for Flask
   from swagger_ui import flask_api_doc
   flask_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+
+  # for Quart
+  from swagger_ui import quart_api_doc
+  quart_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
   ```
 
 - Edit `Swagger` config file (JSON or YAML)

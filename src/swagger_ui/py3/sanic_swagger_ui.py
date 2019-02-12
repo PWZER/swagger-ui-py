@@ -1,4 +1,4 @@
-from . import utils
+from .. import utils
 
 
 def api_doc(app, config_path, url_prefix='/api/doc', title='API doc'):
