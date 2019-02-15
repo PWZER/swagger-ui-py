@@ -1,9 +1,5 @@
 # swagger-ui-py
-Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.
-
-## Swagger UI
-
-  Swagger UI version is `3.19.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and Sanic.
 
 ## Usage
 
@@ -31,6 +27,10 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.
   # for Quart
   from swagger_ui import quart_api_doc
   quart_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+
+  # for aiohttp
+  from swagger_ui import aiohttp_api_doc
+  aiohttp_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
   ```
 
 - Edit `Swagger` config file (JSON or YAML)
@@ -40,3 +40,6 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.
 - Access
 
   `http://<host>:<port>/api/doc`, open the url in your browser.
+
+## Swagger UI
+Swagger UI version is `3.19.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
