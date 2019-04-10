@@ -11,6 +11,21 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
 
 - Code
 
+  Using the local config file
+
+  ```python
+  from swagger_ui import api_doc
+  api_doc(app, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc')
+  ```
+
+  Using config url, but need to suport [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
+
+  ```python
+  api_doc(app, config_url='https://petstore.swagger.io/v2/swagger.json', url_prefix='/api/doc', title='API doc')
+  ```
+
+  and keep the old way
+
   ```python
   # for Tornado
   from swagger_ui import tornado_api_doc
@@ -42,4 +57,11 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
   `http://<host>:<port>/api/doc`, open the url in your browser.
 
 ## Swagger UI
-Swagger UI version is `3.19.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `3.22.0`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+
+You can update Swagger UI version with
+
+```bash
+cd swagger-ui-py/tools
+python update_swagger_ui.py
+```
