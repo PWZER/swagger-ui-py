@@ -117,25 +117,37 @@ class Interface(object):
         )
 
         @swagger_blueprint.route(r'/')
-        def swagger_blueprint_index_handler():
-            return self.index_html
+        def swagger_blueprint_doc_handler():
+            return self.doc_html
 
         @swagger_blueprint.route(r'/swagger.json')
         def swagger_blueprint_config_handler():
             return jsonify(self.get_config(request.host))
+
+        if self._editor:
+            @swagger_blueprint.route(r'/editor')
+            def swagger_blueprint_editor_handler():
+                return self.editor_html
 
         self._app.register_blueprint(swagger_blueprint)
 
     def _aiohttp_handler(self):
         from aiohttp import web
 
-        async def swagger_index_handler(request):
-            return web.Response(text=self.index_html, content_type='text/html')
+        async def swagger_doc_handler(request):
+            return web.Response(text=self.doc_html, content_type='text/html')
+
+        async def swagger_editor_handler(request):
+            return web.Response(text=self.editor_html, content_type='text/html')
 
         async def swagger_config_handler(request):
             return web.json_response(self.get_config(request.host))
 
-        self._app.router.add_get(self._uri(), swagger_index_handler)
+        self._app.router.add_get(self._uri(), swagger_doc_handler)
+
+        if self._editor:
+            self._app.router.add_get(self._uri('/editor'), swagger_editor_handler)
+
         self._app.router.add_get(self._uri('/swagger.json'), swagger_config_handler)
         self._app.router.add_static(self._uri('/'), path='{}/'.format(self.static_dir))
 
@@ -146,14 +158,19 @@ class Interface(object):
         swagger_blueprint = Blueprint('swagger_blueprint', url_prefix=self._url_prefix)
 
         @swagger_blueprint.get('/')
-        async def swagger_blueprint_index_handler(request):
-            return response.html(self.index_html)
+        async def swagger_blueprint_doc_handler(request):
+            return response.html(self.doc_html)
+
+        if self._editor:
+            @swagger_blueprint.get('/editor')
+            async def swagger_blueprint_editor_handler(request):
+                return response.html(self.editor_html)
 
         @swagger_blueprint.get('/swagger.json')
         async def swagger_blueprint_config_handler(request):
             return response.json(self.get_config(request.host))
 
-        swagger_blueprint.static('/', self.static_dir)
+        swagger_blueprint.static('/', str(self.static_dir))
         self._app.blueprint(swagger_blueprint)
 
     def _quart_handler(self):
@@ -166,8 +183,13 @@ class Interface(object):
         )
 
         @swagger_blueprint.route('/', methods=['GET'])
-        async def swagger_blueprint_index_handler():
-            return self.index_html
+        async def swagger_blueprint_doc_handler():
+            return self.doc_html
+
+        if self._editor:
+            @swagger_blueprint.route('/editor', methods=['GET'])
+            async def swagger_blueprint_editor_handler():
+                return self.editor_html
 
         @swagger_blueprint.route('/swagger.json', methods=['GET'])
         async def swagger_blueprint_config_handler():
