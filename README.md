@@ -52,9 +52,17 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
   
   Please see [https://swagger.io/resources/open-api/](https://swagger.io/resources/open-api/).
 
+  Enable editor mode
+
+  ```python
+  api_doc(app, config_path='./config/test.yaml', editor=True)
+  ```
+
 - Access
 
-  `http://<host>:<port>/api/doc`, open the url in your browser.
+  Open `http://<host>:<port>/api/doc/editor`, you can edit api doc config file.
+
+  Open `http://<host>:<port>/api/doc` view api doc.
 
 ## Swagger UI
 Swagger UI version is `3.22.0`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).

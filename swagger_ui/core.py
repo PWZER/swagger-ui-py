@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import yaml
-import urllib
+import urllib.request
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -12,13 +12,14 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 class Interface(object):
 
     def __init__(self, app, app_type=None, config_path=None, config_url=None,
-                 url_prefix='/api/doc', title='API doc'):
+                 url_prefix='/api/doc', title='API doc', editor=False):
 
         self._app = app
         self._title = title
         self._url_prefix = url_prefix
         self._config_url = config_url
         self._config_path = config_path
+        self._editor = editor
 
         assert self._config_url or self._config_path, 'config_url or config_path is required!'
 
@@ -37,12 +38,15 @@ class Interface(object):
         return os.path.join(CURRENT_DIR, 'static')
 
     @property
-    def index_tempalate(self):
-        return self._env.get_template('index.html')
+    def doc_html(self):
+        return self._env.get_template('doc.html').render(
+            url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
+        )
 
     @property
-    def index_html(self):
-        return self.index_tempalate.render(
+    def editor_html(self):
+        print('here')
+        return self._env.get_template('editor.html').render(
             url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
         )
 
@@ -81,19 +85,28 @@ class Interface(object):
 
         interface = self
 
-        class SwaggerIndexHandler(RequestHandler):
+        class DocHandler(RequestHandler):
             def get(self, *args, **kwargs):
-                return self.write(interface.index_html)
+                return self.write(interface.doc_html)
 
-        class SwaggerConfigHandler(RequestHandler):
+        class EditorHandler(RequestHandler):
+            def get(self, *args, **kwargs):
+                return self.write(interface.editor_html)
+
+        class ConfigHandler(RequestHandler):
             def get(self, *args, **kwargs):
                 return self.write(interface.get_config(self.request.host))
 
         handlers = [
-            (self._uri(), SwaggerIndexHandler),
-            (self._uri('/swagger.json'), SwaggerConfigHandler),
+            (self._uri(), DocHandler),
+            (self._uri('/swagger.json'), ConfigHandler),
             (self._uri('/(.+)'), StaticFileHandler, {'path': self.static_dir}),
         ]
+
+        if self._editor:
+            handlers.insert(1, (self._uri('/editor'), EditorHandler))
+
+        print(handlers)
         self._app.add_handlers('.*', handlers)
 
     def _flask_handler(self):
