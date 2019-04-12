@@ -1,12 +1,14 @@
 # swagger-ui-py
 Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and Sanic.
 
+Only support Python3.
+
 ## Usage
 
 - Install
 
   ```bash
-  pip install swagger-ui-py
+  pip3 install swagger-ui-py
   ```
 
 - Code
@@ -24,7 +26,13 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
   api_doc(app, config_url='https://petstore.swagger.io/v2/swagger.json', url_prefix='/api/doc', title='API doc')
   ```
 
-  and keep the old way
+  And suport config file editor
+
+  ```python
+  api_doc(app, config_path='./config/test.yaml', editor=True)
+  ```
+
+  And keep the old way
 
   ```python
   # for Tornado
@@ -52,12 +60,6 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
   
   Please see [https://swagger.io/resources/open-api/](https://swagger.io/resources/open-api/).
 
-  Enable editor mode
-
-  ```python
-  api_doc(app, config_path='./config/test.yaml', editor=True)
-  ```
-
 - Access
 
   Open `http://<host>:<port>/api/doc/editor`, you can edit api doc config file.
@@ -67,7 +69,11 @@ Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp and San
 ## Swagger UI
 Swagger UI version is `3.22.0`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
-You can update Swagger UI version with
+## Swagger Editor
+Swagger Editor version is `3.6.27`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+
+## Update
+You can update swagger ui and swagger editor version with
 
 ```bash
 cd swagger-ui-py/tools

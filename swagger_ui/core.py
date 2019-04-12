@@ -1,12 +1,12 @@
-import os
-import sys
 import json
-import yaml
+import sys
 import urllib.request
+from pathlib import Path
 
+import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+CURRENT_DIR = Path(__file__).resolve().parent
 
 
 class Interface(object):
@@ -24,7 +24,7 @@ class Interface(object):
         assert self._config_url or self._config_path, 'config_url or config_path is required!'
 
         self._env = Environment(
-            loader=FileSystemLoader(os.path.join(CURRENT_DIR, 'templates')),
+            loader=FileSystemLoader(str(CURRENT_DIR.joinpath('templates'))),
             autoescape=select_autoescape(['html'])
         )
 
@@ -35,7 +35,7 @@ class Interface(object):
 
     @property
     def static_dir(self):
-        return os.path.join(CURRENT_DIR, 'static')
+        return CURRENT_DIR.joinpath('static')
 
     @property
     def doc_html(self):
@@ -64,7 +64,7 @@ class Interface(object):
 
     def get_config(self, host):
         if self._config_path:
-            assert os.path.isfile(self._config_path)
+            assert Path(self._config_path).is_file()
 
             with open(self._config_path, 'r') as config_file:
                 config = self._load_config(config_file.read())
