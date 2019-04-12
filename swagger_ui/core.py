@@ -45,7 +45,6 @@ class Interface(object):
 
     @property
     def editor_html(self):
-        print('here')
         return self._env.get_template('editor.html').render(
             url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
         )
@@ -106,7 +105,6 @@ class Interface(object):
         if self._editor:
             handlers.insert(1, (self._uri('/editor'), EditorHandler))
 
-        print(handlers)
         self._app.add_handlers('.*', handlers)
 
     def _flask_handler(self):
