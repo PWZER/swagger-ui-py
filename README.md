@@ -71,5 +71,7 @@ You can update Swagger UI version with
 
 ```bash
 cd swagger-ui-py/tools
-python update_swagger_ui.py
+python update.py ui
+# or
+python update.py editor
 ```

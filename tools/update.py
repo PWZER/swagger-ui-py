@@ -23,11 +23,20 @@ def detect_latest_release(repo):
 
 
 def dist_copy(dist_dir):
+    # index.html for swagger editor
+    if cmd_args['ui']:
+        index_html_path = dist_dir.joinpath('index.html')
+        dst_path = templates_dir.joinpath('doc.html')
+    elif cmd_args['editor']:
+        index_html_path = dist_dir.parent.joinpath('index.html')
+        dst_path = templates_dir.joinpath('editor.html')
+
+    shutil.copyfile(str(index_html_path), str(dst_path))
+
     for path in dist_dir.glob('**/*'):
         if path.suffix == '.html':
-            shutil.copyfile(str(path), str(path).replace(str(dist_dir), str(templates_dir)))
-        else:
-            shutil.copyfile(str(path), str(path).replace(str(dist_dir), str(static_dir)))
+            continue
+        shutil.copyfile(str(path), str(path).replace(str(dist_dir), str(static_dir)))
 
 
 def download_archive(repo, version):
@@ -49,11 +58,6 @@ def download_archive(repo, version):
     tar_file.extractall(path=cur_dir)
     swagger_ui_dir = cur_dir.joinpath(tar_file.getnames()[0])
 
-    # index.html for swagger editor
-    index_html_path = swagger_ui_dir.joinpath('index.html')
-    if index_html_path.is_file():
-        shutil.copyfile(str(index_html_path), str(templates_dir.joinpath('editor.html')))
-
     dist_copy(swagger_ui_dir.joinpath('dist'))
 
     print('remove {}'.format(swagger_ui_dir))
@@ -69,6 +73,8 @@ def replace_html_content():
             index_content = html_file.read()
 
         index_content = re.sub('<title>.*</title>', '<title> {{ title }} </title>', index_content)
+        index_content = re.sub('src="\\.(/dist)', 'src="{{ url_prefix }}', index_content)
+        index_content = re.sub('href="\\.(/dist)', 'href="{{ url_prefix }}', index_content)
         index_content = re.sub('src="\\.', 'src="{{ url_prefix }}', index_content)
         index_content = re.sub('href="\\.', 'href="{{ url_prefix }}', index_content)
         index_content = re.sub('https://petstore.swagger.io/v[1-9]/swagger.json',
@@ -82,15 +88,14 @@ if __name__ == '__main__':
     cmd_args = docopt(__doc__, version='0.1.0')
 
     cur_dir = Path(__file__).resolve().parent
-    static_dir = cur_dir.joinpath('swagger_ui/static')
-    templates_dir = cur_dir.joinpath('swagger_ui/templates')
+    static_dir = cur_dir.parent.joinpath('swagger_ui/static')
+    templates_dir = cur_dir.parent.joinpath('swagger_ui/templates')
 
     if cmd_args['ui']:
         repo = 'swagger-api/swagger-ui'
-        download_archive(repo, cmd_args['--release'])
 
     if cmd_args['editor']:
         repo = 'swagger-api/swagger-editor'
-        download_archive(repo, cmd_args['--release'])
 
+    download_archive(repo, cmd_args['--release'])
     replace_html_content()
