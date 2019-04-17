@@ -56,7 +56,7 @@ class Interface(object):
             pass
 
         try:
-            return yaml.load(config_str)
+            return yaml.load(config_str, Loader=yaml.FullLoader)
         except yaml.YAMLError:
             pass
 
@@ -66,7 +66,7 @@ class Interface(object):
         if self._config_path:
             assert Path(self._config_path).is_file()
 
-            with open(self._config_path, 'r') as config_file:
+            with open(self._config_path, 'rb') as config_file:
                 config = self._load_config(config_file.read())
 
         elif self._config_url:

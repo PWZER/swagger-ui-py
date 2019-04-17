@@ -17,10 +17,15 @@ def readme():
         return f.read()
 
 
+def load_requirements():
+    with open('./requirements.txt') as requirements_file:
+        return [r.strip() for r in requirements_file.read().split()]
+
+
 if __name__ == '__main__':
     setup(
         name='swagger-ui-py',
-        version='0.1.6',
+        version='0.1.8',
         description='Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.',
         long_description=readme(),
         long_description_content_type='text/markdown',
@@ -28,7 +33,7 @@ if __name__ == '__main__':
         include_package_data=True,
         packages=find_packages(),
         package_data=load_package_data(),
-        install_requires=['Jinja2>=2.0', 'PyYAML>=2.0'],
+        install_requires=load_requirements(),
         url='https://github.com/PWZER/swagger-ui-py',
         author='PWZER',
         author_email='pwzergo@gmail.com',
