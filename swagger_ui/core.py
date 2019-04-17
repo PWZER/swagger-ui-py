@@ -1,6 +1,8 @@
 import json
+import re
 import sys
 import urllib.request
+from distutils.version import StrictVersion
 from pathlib import Path
 
 import yaml
@@ -73,7 +75,11 @@ class Interface(object):
             with urllib.request.urlopen(self._config_url) as config_file:
                 config = self._load_config(config_file.read())
 
-        config['host'] = host
+        if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
+            for server in config['servers']:
+                server['url'] = re.sub('//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
+        else:
+            config['host'] = host
         return config
 
     def _uri(self, suffix=''):

@@ -1,0 +1,25 @@
+openapi: 3.0.1
+info:
+  title: python-swagger-ui test api
+  description: python-swagger-ui test api
+  version: 1.0.0
+servers:
+- url: http://127.0.0.1:8989/api
+tags:
+- name: default
+  description: default tag
+paths:
+  /hello/world:
+    get:
+      tags:
+      - default
+      summary: output hello world.
+      responses:
+        200:
+          description: OK
+          content:
+            application/text:
+              schema:
+                type: object
+                example: Hello World!!!
+components: {}
