@@ -27,10 +27,6 @@
         margin:0;
         background: #fafafa;
       }
-
-      .swagger-ui .wrapper {
-        max-width: 1024px;
-      }
     </style>
   </head>
 
@@ -53,9 +49,7 @@
         plugins: [
           SwaggerUIBundle.plugins.DownloadUrl
         ],
-        layout: "StandaloneLayout",
-        defaultModelsExpandDepth: 0,
-        validatorUrl: null
+        layout: "StandaloneLayout"
       })
       // End Swagger UI call region
 
