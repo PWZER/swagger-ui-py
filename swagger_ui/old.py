@@ -29,3 +29,9 @@ class QuartInterface(Interface):
     def __init__(self, *args, **kwargs):
         kwargs['app_type'] = 'quart'
         super(QuartInterface, self).__init__(*args, **kwargs)
+
+
+class FalconInterface(Interface):
+    def __init__(self, *args, **kwargs):
+        kwargs['app_type'] = 'falcon'
+        super(FalconInterface, self).__init__(*args, **kwargs)
