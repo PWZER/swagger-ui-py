@@ -54,6 +54,10 @@ Only support Python3.
   # for aiohttp
   from swagger_ui import aiohttp_api_doc
   aiohttp_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
+  
+  # for Falcon
+  from swagger_ui import falcon_api_doc
+  falcon_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
   ```
 
 - Edit `Swagger` config file (JSON or YAML)

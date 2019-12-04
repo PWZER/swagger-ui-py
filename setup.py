@@ -26,7 +26,7 @@ if __name__ == '__main__':
     setup(
         name='swagger-ui-py',
         version='0.1.10',
-        description='Swagger UI for Python web framework, such Tornado, Flask, Quart and Sanic.',
+        description='Swagger UI for Python web framework, such Tornado, Flask, Quart, Sanic and Falcon.',
         long_description=readme(),
         long_description_content_type='text/markdown',
         license='Apache License 2.0',

@@ -203,6 +203,41 @@ class Interface(object):
 
         self._app.register_blueprint(blueprint=swagger_blueprint, url_prefix=self._url_prefix)
 
+    def _falcon_handler(self):
+        import json
+
+        class SwaggerDocHandler:
+            def __init__(self, interface):
+                self._doc_html = interface.doc_html
+
+            def on_get(self, req, resp):
+                resp.content_type = 'text/html'
+                resp.body = self._doc_html
+
+        class SwaggerEditorHandler:
+            def __init__(self, interface):
+                self._editor_html = interface.editor_html
+
+            def on_get(self, req, resp):
+                resp.content_type = 'text/html'
+                resp.body = self._editor_html
+
+        class SwaggerConfigHandler:
+            def __init__(self, interface):
+                self._interface = interface
+
+            def on_get(self, req, resp):
+                resp.content_type = 'application/json'
+                resp.body = json.dumps(self._interface.get_config(f'{req.host}:{req.port}'))
+
+        self._app.add_route(self._uri(), SwaggerDocHandler(self))
+
+        if self._editor:
+            self._app.add_route(self._uri('/editor'), SwaggerEditorHandler(self))
+
+        self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler(self))
+        self._app.add_static_route(prefix=self._uri('/'), directory='{}/'.format(self.static_dir), downloadable=True)
+
     def _auto_match_handler(self):
         try:
             import tornado.web
@@ -215,6 +250,13 @@ class Interface(object):
             import flask
             if isinstance(self._app, flask.Flask):
                 return self._flask_handler()
+        except ImportError:
+            pass
+
+        try:
+            import falcon
+            if isinstance(self._app, falcon.API):
+                return self._falcon_handler()
         except ImportError:
             pass
 
