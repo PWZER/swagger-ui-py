@@ -304,10 +304,10 @@ class Interface(object):
                 pass
 
             try:
-                import starlette.application
-                if isinstance(self._app, starlette.application.Starlette):
+                import starlette.applications
+                if isinstance(self._app, starlette.applications.Starlette):
                     return self._starlette_handler()
             except ImportError:
                 pass
-    
+
         raise Exception('No match application isinstance type!')
