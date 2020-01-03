@@ -238,6 +238,27 @@ class Interface(object):
         self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler(self))
         self._app.add_static_route(prefix=self._uri('/'), directory='{}/'.format(self.static_dir), downloadable=True)
 
+    def _starlette_handler(self):
+        from starlette.responses import HTMLResponse, JSONResponse
+        from starlette.staticfiles import StaticFiles
+
+        async def swagger_doc_handler(request):
+            return HTMLResponse(content=self.doc_html, media_type='text/html')
+
+        async def swagger_editor_handler(request):
+            return JSONResponse(content=self.editor_html, media_type='text/html')
+
+        async def swagger_config_handler(request):
+            return JSONResponse(self.get_config(request.host))
+        self._app.router.add_route(self._uri('/apidocs',), swagger_doc_handler, ['get'], 'swagger-ui')
+
+        if self._editor:
+            self._app.router.add_route(self._uri('/editor'), swagger_editor_handler,['get'], 'swagger-editor')
+
+        self._app.router.add_route(self._uri('/swagger.json'), swagger_config_handler, ['get'], 'swagger-config')
+        self._app.router.mount(self._uri('/'), app=StaticFiles(directory='{}/'.format(self.static_dir)), name='swagger-static-files')
+
+
     def _auto_match_handler(self):
         try:
             import tornado.web
@@ -282,4 +303,11 @@ class Interface(object):
             except ImportError:
                 pass
 
+            try:
+                import starlette.application
+                if isinstance(self._app, starlette.application.Starlette):
+                    return self._starlette_handler()
+            except ImportError:
+                pass
+    
         raise Exception('No match application isinstance type!')
