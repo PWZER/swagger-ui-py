@@ -78,7 +78,7 @@ class Interface(object):
         if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
             for server in config['servers']:
                 server['url'] = re.sub('//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
-        else:
+        elif not 'host' in config:
             config['host'] = host
         return config
 
