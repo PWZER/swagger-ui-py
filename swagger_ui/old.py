@@ -35,3 +35,9 @@ class FalconInterface(Interface):
     def __init__(self, *args, **kwargs):
         kwargs['app_type'] = 'falcon'
         super(FalconInterface, self).__init__(*args, **kwargs)
+
+
+class StarletteInterface(Interface):
+    def __init__(self, *args, **kwargs):
+        kwargs['app_type'] = 'starlette'
+        super(StarletteInterface, self).__init__(*args, **kwargs)
