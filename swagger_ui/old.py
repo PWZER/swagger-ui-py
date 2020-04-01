@@ -41,3 +41,8 @@ class StarletteInterface(Interface):
     def __init__(self, *args, **kwargs):
         kwargs['app_type'] = 'starlette'
         super(StarletteInterface, self).__init__(*args, **kwargs)
+
+class BottleInterface(Interface):
+    def __init__(self, *args, **kwargs):
+        kwargs['app_type'] = 'bottle'
+        super(BottleInterface, self).__init__(*args, **kwargs)

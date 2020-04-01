@@ -157,6 +157,28 @@ class Interface(object):
         self._app.router.add_get(self._uri('/swagger.json'), swagger_config_handler)
         self._app.router.add_static(self._uri('/'), path='{}/'.format(self.static_dir))
 
+    def _bottle_handler(self):
+        app = self._app
+
+        @app.get("/")
+        def index():
+            return self.doc_html
+
+        @app.get('/<filepath:re:.*\.(js|css)>')
+        def java_script_file(filepath):
+            return static_file(filepath, root=self.static_dir)
+
+        @app.get("/swagger.json")
+        def config_handler():
+            from bottle import redirect
+            # If bottle runs with the python 3.6 built-in wsgi-server, the sub-request will cause the wsgi server to fail the request, so redirecting will work. The host most be set in the config.
+            redirect(self._config_url)
+
+        if self._editor:
+            @app.get("/editor")
+            def editor():
+                return self.editor_html
+
     def _sanic_handler(self):
         from sanic import response
         from sanic.blueprints import Blueprint
@@ -280,6 +302,13 @@ class Interface(object):
                 return self._falcon_handler()
         except ImportError:
             pass
+
+        try:
+            from bottle import Bottle
+            if isinstance(self._app, Bottle):
+                  return self._bottle_handler()
+        except ImportError:
+             pass
 
         if sys.version_info >= (3, 0):
             try:
