@@ -249,8 +249,8 @@ class Interface(object):
             return JSONResponse(content=self.editor_html, media_type='text/html')
 
         async def swagger_config_handler(request):
-            return JSONResponse(self.get_config(request.host))
-        self._app.router.add_route(self._uri('/apidocs',), swagger_doc_handler, ['get'], 'swagger-ui')
+            return JSONResponse(self.get_config(request.client.host))
+        self._app.router.add_route(self._uri('/',), swagger_doc_handler, ['get'], 'swagger-ui')
 
         if self._editor:
             self._app.router.add_route(self._uri('/editor'), swagger_editor_handler,['get'], 'swagger-editor')
