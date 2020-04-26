@@ -1,5 +1,5 @@
 swagger: '2.0'
-host: '127.0.0.1:8000'
+# host: '127.0.0.1:8989'
 schemes:
   - http
 basePath: /

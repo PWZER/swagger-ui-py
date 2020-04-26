@@ -119,7 +119,7 @@ class Interface(object):
 
         swagger_blueprint = Blueprint(
             'swagger_blueprint', __name__, url_prefix=self._url_prefix,
-            static_folder=self.static_dir, static_url_path='/'
+            static_folder=str(self.static_dir), static_url_path='/'
         )
 
         @swagger_blueprint.route(r'/')
@@ -158,26 +158,22 @@ class Interface(object):
         self._app.router.add_static(self._uri('/'), path='{}/'.format(self.static_dir))
 
     def _bottle_handler(self):
-        app = self._app
+        from bottle import static_file, request
 
-        @app.get('/')
+        @self._app.get(self._uri(r'/'))
         def index():
             return self.doc_html
 
-        @app.get(r'/<filepath:re:.*\.(js|css)>')
+        @self._app.get(self._uri(r'/swagger.json'))
+        def config_handler():
+            return self.get_config(request.urlparts.netloc)
+
+        @self._app.get(self._uri(r'/<filepath>'))
         def java_script_file(filepath):
             return static_file(filepath, root=self.static_dir)
 
-        @app.get('/swagger.json')
-        def config_handler():
-            from bottle import redirect
-            # If bottle runs with the python 3.6 built-in wsgi-server,
-            # the sub-request will cause the wsgi server to fail the request,
-            # so redirecting will work. The host most be set in the config.
-            redirect(self._config_url)
-
         if self._editor:
-            @app.get('/editor')
+            @self._app.get(self._uri('/editor'))
             def editor():
                 return self.editor_html
 
@@ -274,7 +270,8 @@ class Interface(object):
             return JSONResponse(content=self.editor_html, media_type='text/html')
 
         async def swagger_config_handler(request):
-            return JSONResponse(self.get_config(request.client.host))
+            host = '{}:{}'.format(request.url.hostname, request.url.port)
+            return JSONResponse(self.get_config(host))
 
         self._app.router.add_route(self._uri('/',), swagger_doc_handler, ['get'], 'swagger-ui')
 

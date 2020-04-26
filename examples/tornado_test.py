@@ -21,7 +21,7 @@ if __name__ == '__main__':
     config_path = os.path.join(cur_dir, 'conf/test.yaml')
 
     from swagger_ui import api_doc
-    api_doc(app, config_path=config_path)
+    api_doc(app, config_path=config_path, url_prefix='/api/doc/')
 
     app.listen(8989)
     tornado.ioloop.IOLoop.current().start()
