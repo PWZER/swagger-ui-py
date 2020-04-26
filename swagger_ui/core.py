@@ -77,8 +77,8 @@ class Interface(object):
 
         if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
             for server in config['servers']:
-                server['url'] = re.sub('//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
-        elif not 'host' in config:
+                server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
+        elif 'host' not in config:
             config['host'] = host
         return config
 
@@ -160,22 +160,24 @@ class Interface(object):
     def _bottle_handler(self):
         app = self._app
 
-        @app.get("/")
+        @app.get('/')
         def index():
             return self.doc_html
 
-        @app.get('/<filepath:re:.*\.(js|css)>')
+        @app.get(r'/<filepath:re:.*\.(js|css)>')
         def java_script_file(filepath):
             return static_file(filepath, root=self.static_dir)
 
-        @app.get("/swagger.json")
+        @app.get('/swagger.json')
         def config_handler():
             from bottle import redirect
-            # If bottle runs with the python 3.6 built-in wsgi-server, the sub-request will cause the wsgi server to fail the request, so redirecting will work. The host most be set in the config.
+            # If bottle runs with the python 3.6 built-in wsgi-server,
+            # the sub-request will cause the wsgi server to fail the request,
+            # so redirecting will work. The host most be set in the config.
             redirect(self._config_url)
 
         if self._editor:
-            @app.get("/editor")
+            @app.get('/editor')
             def editor():
                 return self.editor_html
 
@@ -258,7 +260,8 @@ class Interface(object):
             self._app.add_route(self._uri('/editor'), SwaggerEditorHandler(self))
 
         self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler(self))
-        self._app.add_static_route(prefix=self._uri('/'), directory='{}/'.format(self.static_dir), downloadable=True)
+        self._app.add_static_route(prefix=self._uri(
+            '/'), directory='{}/'.format(self.static_dir), downloadable=True)
 
     def _starlette_handler(self):
         from starlette.responses import HTMLResponse, JSONResponse
@@ -272,14 +275,18 @@ class Interface(object):
 
         async def swagger_config_handler(request):
             return JSONResponse(self.get_config(request.host))
-        self._app.router.add_route(self._uri('/apidocs',), swagger_doc_handler, ['get'], 'swagger-ui')
+        self._app.router.add_route(self._uri('/apidocs',),
+                                   swagger_doc_handler, ['get'], 'swagger-ui')
 
         if self._editor:
-            self._app.router.add_route(self._uri('/editor'), swagger_editor_handler,['get'], 'swagger-editor')
+            self._app.router.add_route(
+                self._uri('/editor'), swagger_editor_handler, ['get'], 'swagger-editor')
 
-        self._app.router.add_route(self._uri('/swagger.json'), swagger_config_handler, ['get'], 'swagger-config')
-        self._app.router.mount(self._uri('/'), app=StaticFiles(directory='{}/'.format(self.static_dir)), name='swagger-static-files')
-
+        self._app.router.add_route(self._uri('/swagger.json'),
+                                   swagger_config_handler, ['get'], 'swagger-config')
+        self._app.router.mount(self._uri('/'),
+                               app=StaticFiles(directory='{}/'.format(self.static_dir)),
+                               name='swagger-static-files')
 
     def _auto_match_handler(self):
         try:
@@ -306,9 +313,9 @@ class Interface(object):
         try:
             from bottle import Bottle
             if isinstance(self._app, Bottle):
-                  return self._bottle_handler()
+                return self._bottle_handler()
         except ImportError:
-             pass
+            pass
 
         if sys.version_info >= (3, 0):
             try:
