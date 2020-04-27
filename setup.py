@@ -3,6 +3,9 @@ import os
 from setuptools import find_packages, setup
 
 
+DESCRIPTION = 'Swagger UI for Python web framework, such Tornado, Flask, Quart, Sanic and Falcon.'
+
+
 def load_package_data():
     package_data = []
     cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,8 +28,8 @@ def load_requirements():
 if __name__ == '__main__':
     setup(
         name='swagger-ui-py',
-        version='0.2.1',
-        description='Swagger UI for Python web framework, such Tornado, Flask, Quart, Sanic and Falcon.',
+        version='0.3.0',
+        description=DESCRIPTION,
         long_description=readme(),
         long_description_content_type='text/markdown',
         license='Apache License 2.0',
