@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     from swagger_ui import api_doc
 
-    api_doc(app, config_path=config_path)
+    api_doc(app, config_path=config_path, url_prefix='/api/doc')
 
     httpd = simple_server.make_server('0.0.0.0', 8989, app)
     httpd.serve_forever()

@@ -1,6 +1,5 @@
 import json
 import re
-import sys
 import urllib.request
 from distutils.version import StrictVersion
 from pathlib import Path
@@ -18,7 +17,7 @@ class Interface(object):
 
         self._app = app
         self._title = title
-        self._url_prefix = url_prefix
+        self._url_prefix = url_prefix.rstrip('/')
         self._config_url = config_url
         self._config_path = config_path
         self._editor = editor
@@ -37,7 +36,7 @@ class Interface(object):
 
     @property
     def static_dir(self):
-        return CURRENT_DIR.joinpath('static')
+        return str(CURRENT_DIR.joinpath('static'))
 
     @property
     def doc_html(self):
@@ -104,6 +103,7 @@ class Interface(object):
 
         handlers = [
             (self._uri(), DocHandler),
+            (self._uri('/'), DocHandler),
             (self._uri('/swagger.json'), ConfigHandler),
             (self._uri('/(.+)'), StaticFileHandler, {'path': self.static_dir}),
         ]
@@ -119,11 +119,15 @@ class Interface(object):
 
         swagger_blueprint = Blueprint(
             'swagger_blueprint', __name__, url_prefix=self._url_prefix,
-            static_folder=str(self.static_dir), static_url_path='/'
+            static_folder=self.static_dir, static_url_path='/'
         )
 
-        @swagger_blueprint.route(r'/')
+        @swagger_blueprint.route(r'')
         def swagger_blueprint_doc_handler():
+            return self.doc_html
+
+        @swagger_blueprint.route(r'/')
+        def swagger_blueprint_doc_v2_handler():
             return self.doc_html
 
         @swagger_blueprint.route(r'/swagger.json')
@@ -150,6 +154,7 @@ class Interface(object):
             return web.json_response(self.get_config(request.host))
 
         self._app.router.add_get(self._uri(), swagger_doc_handler)
+        self._app.router.add_get(self._uri('/'), swagger_doc_handler)
 
         if self._editor:
             self._app.router.add_get(self._uri('/editor'), swagger_editor_handler)
@@ -160,6 +165,7 @@ class Interface(object):
     def _bottle_handler(self):
         from bottle import static_file, request
 
+        @self._app.get(self._uri())
         @self._app.get(self._uri(r'/'))
         def index():
             return self.doc_html
@@ -225,37 +231,29 @@ class Interface(object):
 
     def _falcon_handler(self):
         import json
+        interface = self
 
         class SwaggerDocHandler:
-            def __init__(self, interface):
-                self._doc_html = interface.doc_html
-
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
-                resp.body = self._doc_html
+                resp.body = interface.doc_html
 
         class SwaggerEditorHandler:
-            def __init__(self, interface):
-                self._editor_html = interface.editor_html
-
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
-                resp.body = self._editor_html
+                resp.body = interface.editor_html
 
         class SwaggerConfigHandler:
-            def __init__(self, interface):
-                self._interface = interface
-
             def on_get(self, req, resp):
                 resp.content_type = 'application/json'
-                resp.body = json.dumps(self._interface.get_config(f'{req.host}:{req.port}'))
+                resp.body = json.dumps(interface.get_config(f'{req.host}:{req.port}'))
 
-        self._app.add_route(self._uri(), SwaggerDocHandler(self))
+        self._app.add_route(self._uri('/'), SwaggerDocHandler())
 
         if self._editor:
-            self._app.add_route(self._uri('/editor'), SwaggerEditorHandler(self))
+            self._app.add_route(self._uri('/editor'), SwaggerEditorHandler())
 
-        self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler(self))
+        self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler())
         self._app.add_static_route(prefix=self._uri(
             '/'), directory='{}/'.format(self.static_dir), downloadable=True)
 
@@ -273,7 +271,8 @@ class Interface(object):
             host = '{}:{}'.format(request.url.hostname, request.url.port)
             return JSONResponse(self.get_config(host))
 
-        self._app.router.add_route(self._uri('/',), swagger_doc_handler, ['get'], 'swagger-ui')
+        self._app.router.add_route(self._uri(''), swagger_doc_handler, ['get'], 'swagger-ui')
+        self._app.router.add_route(self._uri('/'), swagger_doc_handler, ['get'], 'swagger-ui')
 
         if self._editor:
             self._app.router.add_route(
@@ -301,6 +300,34 @@ class Interface(object):
             pass
 
         try:
+            import sanic
+            if isinstance(self._app, sanic.Sanic):
+                return self._sanic_handler()
+        except ImportError:
+            pass
+
+        try:
+            import aiohttp.web
+            if isinstance(self._app, aiohttp.web.Application):
+                return self._aiohttp_handler()
+        except ImportError:
+            pass
+
+        try:
+            import quart
+            if isinstance(self._app, quart.Quart):
+                return self._quart_handler()
+        except ImportError:
+            pass
+
+        try:
+            import starlette.applications
+            if isinstance(self._app, starlette.applications.Starlette):
+                return self._starlette_handler()
+        except ImportError:
+            pass
+
+        try:
             import falcon
             if isinstance(self._app, falcon.API):
                 return self._falcon_handler()
@@ -313,34 +340,5 @@ class Interface(object):
                 return self._bottle_handler()
         except ImportError:
             pass
-
-        if sys.version_info >= (3, 0):
-            try:
-                import sanic
-                if isinstance(self._app, sanic.Sanic):
-                    return self._sanic_handler()
-            except ImportError:
-                pass
-
-            try:
-                import aiohttp.web
-                if isinstance(self._app, aiohttp.web.Application):
-                    return self._aiohttp_handler()
-            except ImportError:
-                pass
-
-            try:
-                import quart
-                if isinstance(self._app, quart.Quart):
-                    return self._quart_handler()
-            except ImportError:
-                pass
-
-            try:
-                import starlette.applications
-                if isinstance(self._app, starlette.applications.Starlette):
-                    return self._starlette_handler()
-            except ImportError:
-                pass
 
         raise Exception('No match application isinstance type!')

@@ -71,10 +71,10 @@ Only support Python3.
   Open `http://<host>:<port>/api/doc` view api doc.
 
 ## Swagger UI
-Swagger UI version is `3.24.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `3.25.1`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
-Swagger Editor version is `3.7.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+Swagger Editor version is `3.8.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
 
 ## Update
 You can update swagger ui and swagger editor version with
