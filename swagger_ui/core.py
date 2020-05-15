@@ -284,6 +284,35 @@ class Interface(object):
                                app=StaticFiles(directory='{}/'.format(self.static_dir)),
                                name='swagger-static-files')
 
+    def _cyclone_handler(self):
+        from cyclone.web import RequestHandler, StaticFileHandler
+
+        interface = self
+
+        class DocHandler(RequestHandler):
+            def get(self, *args, **kwargs):
+                return self.write(interface.doc_html)
+
+        class EditorHandler(RequestHandler):
+            def get(self, *args, **kwargs):
+                return self.write(interface.editor_html)
+
+        class ConfigHandler(RequestHandler):
+            def get(self, *args, **kwargs):
+                return self.write(interface.get_config(self.request.host))
+
+        handlers = [
+            (self._uri(), DocHandler),
+            (self._uri('/'), DocHandler),
+            (self._uri('/swagger.json'), ConfigHandler),
+            (self._uri('/(.+)'), StaticFileHandler, {'path': self.static_dir}),
+        ]
+
+        if self._editor:
+            handlers.insert(1, (self._uri('/editor'), EditorHandler))
+
+        self._app.add_handlers('.*', handlers)
+
     def _auto_match_handler(self):
         try:
             import tornado.web
@@ -338,6 +367,13 @@ class Interface(object):
             from bottle import Bottle
             if isinstance(self._app, Bottle):
                 return self._bottle_handler()
+        except ImportError:
+            pass
+
+        try:
+            import cyclone.web
+            if isinstance(self._app, cyclone.web.Application):
+                return self._cyclone_handler()
         except ImportError:
             pass
 
