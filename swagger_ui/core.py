@@ -27,7 +27,7 @@ class Interface(object):
         if initOAuth:
             self._initOAuth["clientId"] = initOAuth["clientId"]
             self._initOAuth["clientSecret"] = initOAuth["clientSecret"]
-	self._oauth2_implicit_flow = oauth2_implicit_flow
+        self._oauth2_implicit_flow = oauth2_implicit_flow
 
         assert self._config_url or self._config_path, 'config_url or config_path is required!'
 
