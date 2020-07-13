@@ -13,7 +13,7 @@ CURRENT_DIR = Path(__file__).resolve().parent
 class Interface(object):
 
     def __init__(self, app, app_type=None, config_path=None, config_url=None,
-                 url_prefix='/api/doc', title='API doc', editor=False):
+                 url_prefix='/api/doc', title='API doc', editor=False, initOAuth=None):
 
         self._app = app
         self._title = title
@@ -21,6 +21,12 @@ class Interface(object):
         self._config_url = config_url
         self._config_path = config_path
         self._editor = editor
+        self._initOAuth = {}
+        self._initOAuth["clientId"] = None
+        self._initOAuth["clientSecret"] = None
+        if initOAuth:
+            self._initOAuth["clientId"] = initOAuth["clientId"]
+            self._initOAuth["clientSecret"] = initOAuth["clientSecret"]
 
         assert self._config_url or self._config_path, 'config_url or config_path is required!'
 
@@ -41,7 +47,7 @@ class Interface(object):
     @property
     def doc_html(self):
         return self._env.get_template('doc.html').render(
-            url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
+            url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json'), client_id=self._initOAuth["clientId"], client_secret=self._initOAuth["clientSecret"]
         )
 
     @property
