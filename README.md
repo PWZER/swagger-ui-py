@@ -37,7 +37,8 @@ Only support Python3.
   api_doc(api, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc', initOAuth={"clientId": "client", "clientSecret": "client-secret"})
   ```
 
-  Enabling OAuth2 implicit flow redirect landing page (Only works for Falcon, not tested with url_prefix)
+  Enabling OAuth2 implicit flow redirect landing page
+  It only works for Falcon and it only works from root (url_prefix='/')
 
   ```python
   api_doc(app, config_path='./config/test.yaml', url_prefix='/', title='API doc', oauth2_implicit_flow=True)
