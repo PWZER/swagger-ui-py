@@ -31,6 +31,18 @@ Only support Python3.
   api_doc(app, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc')
   ```
 
+  Using [initOAuth]https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/
+
+  ```python
+  api_doc(api, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc', initOAuth={"clientId": "client", "clientSecret": "client-secret"})
+  ```
+
+  Enabling OAuth2 implicit flow redirect landing page (Only works for Falcon, not tested with url_prefix)
+
+  ```python
+  api_doc(app, config_path='./config/test.yaml', url_prefix='/', title='API doc', oauth2_implicit_flow=True)
+  ```
+
   Using config url, but need to suport [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 
   ```python
