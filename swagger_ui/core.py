@@ -254,7 +254,7 @@ class Interface(object):
                 resp.content_type = 'text/html'
                 resp.body = interface.editor_html
 
-        class SwaggerOauth2RedirectHandler:
+        class SwaggerOAuth2RedirectHandler:
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
                 resp.body = interface.oauth2_redirect_html
@@ -270,7 +270,7 @@ class Interface(object):
             self._app.add_route(self._uri('/editor'), SwaggerEditorHandler())
 
         if self._oauth2_implicit_flow:
-            self._app.add_route(self._uri('/oauth2-redirect.html'), SwaggerOauth2RedirectHandler())
+            self._app.add_route(self._uri('/oauth2-redirect.html'), SwaggerOAuth2RedirectHandler())
 
         self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler())
         self._app.add_static_route(prefix=self._uri(
