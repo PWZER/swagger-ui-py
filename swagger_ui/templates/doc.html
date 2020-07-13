@@ -53,6 +53,11 @@
       })
       // End Swagger UI call region
 
+      ui.initOAuth({
+        clientId: "{{ client_id }}",
+        clientSecret: "{{ client_secret }}"
+      })
+
       window.ui = ui
     }
   </script>
