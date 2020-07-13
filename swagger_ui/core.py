@@ -13,7 +13,7 @@ CURRENT_DIR = Path(__file__).resolve().parent
 class Interface(object):
 
     def __init__(self, app, app_type=None, config_path=None, config_url=None,
-                 url_prefix='/api/doc', title='API doc', editor=False, initOAuth=None):
+                 url_prefix='/api/doc', title='API doc', editor=False, initOAuth=None, oauth2_implicit_flow=False):
 
         self._app = app
         self._title = title
@@ -27,6 +27,7 @@ class Interface(object):
         if initOAuth:
             self._initOAuth["clientId"] = initOAuth["clientId"]
             self._initOAuth["clientSecret"] = initOAuth["clientSecret"]
+	self._oauth2_implicit_flow = oauth2_implicit_flow
 
         assert self._config_url or self._config_path, 'config_url or config_path is required!'
 
@@ -55,6 +56,10 @@ class Interface(object):
         return self._env.get_template('editor.html').render(
             url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
         )
+
+    @property
+    def oauth2_redirect_html(self):
+        return self._env.get_template('oauth2-redirect.html').render()
 
     def _load_config(self, config_str):
         try:
@@ -249,6 +254,11 @@ class Interface(object):
                 resp.content_type = 'text/html'
                 resp.body = interface.editor_html
 
+        class SwaggerOauth2RedirectHandler:
+            def on_get(self, req, resp):
+                resp.content_type = 'text/html'
+                resp.body = interface.oauth2_redirect_html
+
         class SwaggerConfigHandler:
             def on_get(self, req, resp):
                 resp.content_type = 'application/json'
@@ -258,6 +268,9 @@ class Interface(object):
 
         if self._editor:
             self._app.add_route(self._uri('/editor'), SwaggerEditorHandler())
+
+        if self._oauth2_implicit_flow:
+            self._app.add_route(self._uri('/oauth2-redirect.html'), SwaggerOauth2RedirectHandler())
 
         self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler())
         self._app.add_static_route(prefix=self._uri(
