@@ -51,13 +51,13 @@ class Interface(object):
     @property
     def doc_html(self):
         return self._env.get_template('doc.html').render(
-            url_prefix=self._uri(), title=self._title, config_url=self._uri('/swagger.json'), client_id=self._initOAuth["clientId"], client_secret=self._initOAuth["clientSecret"]
+            url_prefix=self._uri_with_prefix(), title=self._title, config_url=self._uri_with_prefix('/swagger.json'), client_id=self._initOAuth["clientId"], client_secret=self._initOAuth["clientSecret"]
         )
 
     @property
     def editor_html(self):
         return self._env.get_template('editor.html').render(
-            url_prefix=self._uri(), title=self._title, config_url=self._uri('/swagger.json')
+            url_prefix=self._uri_with_prefix(), title=self._title, config_url=self._uri_with_prefix('/swagger.json')
         )
 
     @property
@@ -95,8 +95,11 @@ class Interface(object):
             config['host'] = host
         return config
 
-    def _uri(self, suffix=''):
+    def _uri_with_prefix(self, suffix=''):
         return r'{}{}{}'.format(self._url_prefix_rewrite,self._url_prefix, suffix)
+
+    def _uri(self, suffix=''):
+        return r'{}{}'.format(self._url_prefix, suffix)
 
     def _tornado_handler(self):
         from tornado.web import RequestHandler, StaticFileHandler
