@@ -12,12 +12,15 @@ CURRENT_DIR = Path(__file__).resolve().parent
 
 class Interface(object):
 
+    # url_prefix - relative path where UI is server
+    # url_prexix_rewrite - begining part of relative path, that is removed by proxy, but that is necessary for obtaining static files (.js, .css)
     def __init__(self, app, app_type=None, config_path=None, config_url=None,
-                 url_prefix='/api/doc', title='API doc', editor=False, initOAuth=None, oauth2_implicit_flow=False):
+                 url_prefix='/api/doc', url_prefix_rewrite='', title='API doc', editor=False, initOAuth=None, oauth2_implicit_flow=False):
 
         self._app = app
         self._title = title
         self._url_prefix = url_prefix.rstrip('/')
+        self._url_prefix_rewrite = url_prefix_rewrite.rstrip('/')
         self._config_url = config_url
         self._config_path = config_path
         self._editor = editor
@@ -48,13 +51,13 @@ class Interface(object):
     @property
     def doc_html(self):
         return self._env.get_template('doc.html').render(
-            url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json'), client_id=self._initOAuth["clientId"], client_secret=self._initOAuth["clientSecret"]
+            url_prefix=self._uri(), title=self._title, config_url=self._uri('/swagger.json'), client_id=self._initOAuth["clientId"], client_secret=self._initOAuth["clientSecret"]
         )
 
     @property
     def editor_html(self):
         return self._env.get_template('editor.html').render(
-            url_prefix=self._url_prefix, title=self._title, config_url=self._uri('/swagger.json')
+            url_prefix=self._uri(), title=self._title, config_url=self._uri('/swagger.json')
         )
 
     @property
@@ -93,7 +96,7 @@ class Interface(object):
         return config
 
     def _uri(self, suffix=''):
-        return r'{}{}'.format(self._url_prefix, suffix)
+        return r'{}{}{}'.format(self._url_prefix_rewrite,self._url_prefix, suffix)
 
     def _tornado_handler(self):
         from tornado.web import RequestHandler, StaticFileHandler
