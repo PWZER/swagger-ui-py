@@ -6,5 +6,3 @@ from .old import QuartInterface as quart_api_doc
 from .old import SanicInterface as sanic_api_doc
 from .old import TornadoInterface as tornado_api_doc
 from .old import BottleInterface as bottle_api_doc
-
-print("Jsi to ty, ale menší!")
