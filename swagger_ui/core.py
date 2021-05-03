@@ -284,6 +284,31 @@ class Interface(object):
                                app=StaticFiles(directory='{}/'.format(self.static_dir)),
                                name='swagger-static-files')
 
+    def _chalice_handler(self):
+        from chalice import Blueprint
+
+        swagger_blueprint = Blueprint(__name__)
+
+        @swagger_blueprint.route(r'')
+        def swagger_blueprint_doc_handler():
+            return self.doc_html
+
+        @swagger_blueprint.route(r'/')
+        def swagger_blueprint_doc_v2_handler():
+            return self.doc_html
+
+        @swagger_blueprint.route(r'/swagger.json')
+        def swagger_blueprint_config_handler(request):
+            host = '{}:{}'.format(request.url.hostname, request.url.port)
+            return json.dumps(self.get_config(host))
+
+        if self._editor:
+            @swagger_blueprint.route(r'/editor')
+            def swagger_blueprint_editor_handler():
+                return self.editor_html
+
+        self._app.register_blueprint(swagger_blueprint)
+
     def _auto_match_handler(self):
         try:
             import tornado.web
@@ -338,6 +363,13 @@ class Interface(object):
             from bottle import Bottle
             if isinstance(self._app, Bottle):
                 return self._bottle_handler()
+        except ImportError:
+            pass
+
+        try:
+            import chalice
+            if isinstance(self._app, chalice.app.Chalice):
+                return self._chalice_handler()
         except ImportError:
             pass
 
