@@ -37,6 +37,12 @@ Only support Python3.
   api_doc(app, config_url='https://petstore.swagger.io/v2/swagger.json', url_prefix='/api/doc', title='API doc')
   ```
 
+  Setting addtional [SwaggerUI configuration parameters](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/) (simple values only, functions and variables are not supported)
+
+  ```python
+  api_doc(app, config_path='/config/test.yaml', title='API doc', doc_config={ "validationUrl": None })
+  ```
+
   And suport config file editor
 
   ```python

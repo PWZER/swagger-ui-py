@@ -79,6 +79,7 @@ def replace_html_content():
         index_content = re.sub('href="\\.', 'href="{{ url_prefix }}', index_content)
         index_content = re.sub('https://petstore.swagger.io/v[1-9]/swagger.json',
                                '{{ config_url }}', index_content)
+        index_content = re.sub('layout: "StandaloneLayout"', 'layout: "StandaloneLayout", <% if config_json != "null" %>...{{ config_json | safe }}<% endif %>', index_content)
 
         with html_path.open('w') as html_file:
             html_file.write(index_content)
