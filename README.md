@@ -42,6 +42,15 @@ Only support Python3.
   ```python
   api_doc(app, config_path='./config/test.yaml', editor=True)
   ```
+  Using the local variable
+  
+    ```python
+    from swagger_ui import api_doc
+    spec_string = '{"paths": {"/random": {"get": {"description": "Get a random pet", "security": [{"ApiKeyAuth": []}], "responses": {"200": {"description": "Return a pet", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Pet"}}}}}}}}, "info": {"title": "Swagger Petstore", "version": "1.0.0"}, "openapi": "3.0.2", "components": {"schemas": {"Category": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}}, "required": ["name"]}, "Pet": {"type": "object", "properties": {"categories": {"type": "array", "items": {"$ref": "#/components/schemas/Category"}}, "name": {"type": "string"}}}}, "securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}}'
+
+
+    api_doc(app, config_path='./config/test.yaml', url_prefix='/api/doc', title='API doc')
+    ```
 
   And keep the old way
 
