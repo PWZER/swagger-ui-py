@@ -239,17 +239,21 @@ class Interface(object):
         import json
         interface = self
 
-        class SwaggerDocHandler:
+        class Handler:
+            aysnc def on_get_async(self, req, resp):
+                self.on_get(req, resp)
+
+        class SwaggerDocHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
                 resp.body = interface.doc_html
 
-        class SwaggerEditorHandler:
+        class SwaggerEditorHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
                 resp.body = interface.editor_html
 
-        class SwaggerConfigHandler:
+        class SwaggerConfigHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'application/json'
                 resp.body = json.dumps(interface.get_config(f'{req.host}:{req.port}'))
@@ -333,9 +337,16 @@ class Interface(object):
         except ImportError:
             pass
 
-        try:
-            import falcon
-            if isinstance(self._app, falcon.API):
+        try:  # Falcon 2.x
+            from falcon import API
+            if isinstance(self._app, API):
+                return self._falcon_handler()
+        except ImportError:
+            pass
+
+        try:  # Falcon >=3.x
+            import falcon.asgi
+            if isinstance(self._app, (falcon.App, falcon.asgi.App)):
                 return self._falcon_handler()
         except ImportError:
             pass
