@@ -12,7 +12,7 @@ CURRENT_DIR = Path(__file__).resolve().parent
 
 class Interface(object):
 
-    def __init__(self, app, app_type=None, config_path=None, config_url=None,
+    def __init__(self, app, app_type=None, config_path=None, config_url=None, spec=None,
                  url_prefix='/api/doc', title='API doc', editor=False):
 
         self._app = app
@@ -21,8 +21,9 @@ class Interface(object):
         self._config_url = config_url
         self._config_path = config_path
         self._editor = editor
+        self._spec = spec
 
-        assert self._config_url or self._config_path, 'config_url or config_path is required!'
+        assert self._config_url or self._config_path or self._spec, 'config_url or config_path is required!'
 
         self._env = Environment(
             loader=FileSystemLoader(str(CURRENT_DIR.joinpath('templates'))),
@@ -73,7 +74,8 @@ class Interface(object):
         elif self._config_url:
             with urllib.request.urlopen(self._config_url) as config_file:
                 config = self._load_config(config_file.read())
-
+        elif self._spec:
+            config = self._load_config(self._spec)
         if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
             for server in config['servers']:
                 server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
