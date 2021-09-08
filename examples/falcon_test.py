@@ -1,15 +1,20 @@
 import os
+import json
 from wsgiref import simple_server
 
 import falcon
+from distutils.version import StrictVersion
 
 
 class HelloWorldResource(object):
     def on_get(self, req, resp):
-        resp.body = 'Hello World!!!'
+        resp.body = json.dumps({'text': 'Hello World!!!'})
 
 
-app = falcon.API()
+if StrictVersion(falcon.__version__) < StrictVersion('3.0.0'):
+    app = falcon.API()
+else:
+    app = falcon.App()
 
 app.add_route('/hello/world', HelloWorldResource())
 

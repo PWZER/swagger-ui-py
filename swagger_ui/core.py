@@ -235,12 +235,12 @@ class Interface(object):
 
         self._app.register_blueprint(blueprint=swagger_blueprint, url_prefix=self._url_prefix)
 
-    def _falcon_handler(self):
+    def _falcon_handler(self, use_async):
         import json
         interface = self
 
-        class Handler:
-            aysnc def on_get_async(self, req, resp):
+        class Handler(object):
+            async def on_get_async(self, req, resp):
                 self.on_get(req, resp)
 
         class SwaggerDocHandler(Handler):
@@ -258,12 +258,13 @@ class Interface(object):
                 resp.content_type = 'application/json'
                 resp.body = json.dumps(interface.get_config(f'{req.host}:{req.port}'))
 
-        self._app.add_route(self._uri('/'), SwaggerDocHandler())
+        suffix = 'async' if use_async else None
+        self._app.add_route(self._uri('/'), SwaggerDocHandler(), suffix=suffix)
 
         if self._editor:
-            self._app.add_route(self._uri('/editor'), SwaggerEditorHandler())
+            self._app.add_route(self._uri('/editor'), SwaggerEditorHandler(), suffix=suffix)
 
-        self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler())
+        self._app.add_route(self._uri('/swagger.json'), SwaggerConfigHandler(), suffix=suffix)
         self._app.add_static_route(prefix=self._uri(
             '/'), directory='{}/'.format(self.static_dir), downloadable=True)
 
@@ -337,18 +338,21 @@ class Interface(object):
         except ImportError:
             pass
 
-        try:  # Falcon 2.x
-            from falcon import API
-            if isinstance(self._app, API):
-                return self._falcon_handler()
-        except ImportError:
-            pass
+        try:
+            import falcon
+            from distutils.version import StrictVersion
 
-        try:  # Falcon >=3.x
-            import falcon.asgi
-            if isinstance(self._app, (falcon.App, falcon.asgi.App)):
-                return self._falcon_handler()
-        except ImportError:
+            if StrictVersion(falcon.__version__) >= StrictVersion('3.0.0'):
+                import falcon.asgi
+                if isinstance(self._app, falcon.asgi.App):
+                    return self._falcon_handler(use_async=True)
+                elif isinstance(self._app, falcon.App):
+                    return self._falcon_handler(use_async=False)
+            else:
+                if isinstance(self._app, falcon.API):
+                    return self._falcon_handler(use_async=False)
+        except ImportError as ex:
+            print(ex)
             pass
 
         try:
