@@ -18,3 +18,6 @@ def create_app():
     from swagger_ui import api_doc
     api_doc(app, config_path=config_path, url_prefix='/api/doc')
     return app
+
+
+# Run command: uvicorn --factory falcon_asgi_test:create_app --port 8989
