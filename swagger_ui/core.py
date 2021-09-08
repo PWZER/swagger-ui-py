@@ -12,18 +12,20 @@ CURRENT_DIR = Path(__file__).resolve().parent
 
 class Interface(object):
 
-    def __init__(self, app, app_type=None, config_path=None, config_url=None, spec=None,
-                 url_prefix='/api/doc', title='API doc', editor=False):
+    def __init__(self, app, app_type=None, config=None, config_path=None, config_url=None,
+                 config_spec=None, url_prefix='/api/doc', title='API doc', editor=False):
 
         self._app = app
         self._title = title
         self._url_prefix = url_prefix.rstrip('/')
+        self._editor = editor
+
+        self._config = config
         self._config_url = config_url
         self._config_path = config_path
-        self._editor = editor
-        self._spec = spec
-
-        assert self._config_url or self._config_path or self._spec, 'config_url or config_path is required!'
+        self._config_spec = config_spec
+        assert self._config or self._config_url or self._config_path or self._config_spec, \
+            'One of arguments "config", "config_path", "config_url" or "config_spec" is required!'
 
         self._env = Environment(
             loader=FileSystemLoader(str(CURRENT_DIR.joinpath('templates'))),
@@ -65,17 +67,19 @@ class Interface(object):
         raise Exception('Invalid swagger config file format!')
 
     def get_config(self, host):
-        if self._config_path:
+        if self._config:
+            config = self._config
+        elif self._config_path:
             assert Path(self._config_path).is_file()
 
             with open(self._config_path, 'rb') as config_file:
                 config = self._load_config(config_file.read())
-
         elif self._config_url:
             with urllib.request.urlopen(self._config_url) as config_file:
                 config = self._load_config(config_file.read())
-        elif self._spec:
-            config = self._load_config(self._spec)
+        elif self._config_spec:
+            config = self._load_config(self._config_spec)
+
         if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
             for server in config['servers']:
                 server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?', '//{}/'.format(host), server['url'])
