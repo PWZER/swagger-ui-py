@@ -5,14 +5,14 @@ Only support Python3.
 
 ## Supported
 
-- tornado
-- flask
-- sanic
-- aiohttp
-- quart
-- starlette
-- falcon
-- bottle
+- [Tornado](https://www.tornadoweb.org/en/stable/)
+- [Flask](https://flask.palletsprojects.com/)
+- [Sanic](https://sanicframework.org/en/)
+- [AIOHTTP](https://docs.aiohttp.org/en/stable/)
+- [Quart](https://pgjones.gitlab.io/quart/)
+- [Starlette](https://www.starlette.io/)
+- [Falcon](https://falcon.readthedocs.io/en/stable/)
+- [Bottle](https://bottlepy.org/docs/dev/)
 
 ## Usage
 
@@ -100,10 +100,10 @@ Only support Python3.
   Open `http://<host>:<port>/api/doc` view api doc.
 
 ## Swagger UI
-Swagger UI version is `3.25.1`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `v3.52.0`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
-Swagger Editor version is `3.8.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+Swagger Editor version is `v3.18.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
 
 ## Update
 You can update swagger ui and swagger editor version with

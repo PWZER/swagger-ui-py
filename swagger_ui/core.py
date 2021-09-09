@@ -352,7 +352,6 @@ class Interface(object):
                 if isinstance(self._app, falcon.API):
                     return self._falcon_handler(use_async=False)
         except ImportError as ex:
-            print(ex)
             pass
 
         try:
