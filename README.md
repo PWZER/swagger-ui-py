@@ -100,7 +100,7 @@ Only support Python3.
   Open `http://<host>:<port>/api/doc` view api doc.
 
 ## Swagger UI
-Swagger UI version is `v3.52.0`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `v3.52.1`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
 Swagger Editor version is `v3.18.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
@@ -110,7 +110,6 @@ You can update swagger ui and swagger editor version with
 
 ```bash
 cd swagger-ui-py/tools
-python update.py ui
-# or
-python update.py editor
+
+python update.py --ui --editor
 ```

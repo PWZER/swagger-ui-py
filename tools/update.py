@@ -1,8 +1,5 @@
 #! env python
-'''
-Usage:
-    update.py (ui | editor) [--release=<release>]
-'''
+import argparse
 import json
 import re
 import shutil
@@ -10,24 +7,36 @@ import tarfile
 from pathlib import Path
 
 import requests
-from docopt import docopt
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--ui', action='store_true', help='Enabled to update swagger ui.')
+parser.add_argument('--editor', action='store_true', help='Enabled to update swagger editor.')
+parser.add_argument('--ui-version', type=str, default=None,
+                    help='Specify the version of swagger ui, Default latest version.')
+parser.add_argument('--editor-version', type=str, default=None,
+                    help='Specify the version of swagger editor, Default latest version.')
+cmd_args = parser.parse_args()
+
+
+SWAGGER_UI_REPO = 'swagger-api/swagger-ui'
+SWAGGER_EDITOR_REPO = 'swagger-api/swagger-editor'
 
 
 def detect_latest_release(repo):
     print('detect latest release')
-    resp = requests.get('https://api.github.com/repos/{}/releases/latest'.format(repo))
+    resp = requests.get('https://api.github.com/repos/{}/releases/latest'.format(repo), timeout=120)
     latest = json.loads(resp.text)
     tag = latest['tag_name']
     print('{} latest version is {}'.format(repo, tag))
     return tag
 
 
-def dist_copy(dist_dir):
+def dist_copy(repo, dist_dir):
     # index.html for swagger editor
-    if cmd_args['ui']:
+    if repo == SWAGGER_UI_REPO:
         index_html_path = dist_dir.joinpath('index.html')
         dst_path = templates_dir.joinpath('doc.html')
-    elif cmd_args['editor']:
+    elif repo == SWAGGER_EDITOR_REPO:
         index_html_path = dist_dir.parent.joinpath('index.html')
         dst_path = templates_dir.joinpath('editor.html')
 
@@ -58,7 +67,7 @@ def download_archive(repo, version):
     tar_file.extractall(path=cur_dir)
     swagger_ui_dir = cur_dir.joinpath(tar_file.getnames()[0])
 
-    dist_copy(swagger_ui_dir.joinpath('dist'))
+    dist_copy(repo, swagger_ui_dir.joinpath('dist'))
 
     print('remove {}'.format(swagger_ui_dir))
     shutil.rmtree(swagger_ui_dir)
@@ -85,17 +94,14 @@ def replace_html_content():
 
 
 if __name__ == '__main__':
-    cmd_args = docopt(__doc__, version='0.1.0')
-
     cur_dir = Path(__file__).resolve().parent
     static_dir = cur_dir.parent.joinpath('swagger_ui/static')
     templates_dir = cur_dir.parent.joinpath('swagger_ui/templates')
 
-    if cmd_args['ui']:
-        repo = 'swagger-api/swagger-ui'
+    if cmd_args.ui:
+        download_archive(SWAGGER_UI_REPO, cmd_args.ui_version)
+        replace_html_content()
 
-    if cmd_args['editor']:
-        repo = 'swagger-api/swagger-editor'
-
-    download_archive(repo, cmd_args['--release'])
-    replace_html_content()
+    if cmd_args.editor:
+        download_archive(SWAGGER_EDITOR_REPO, cmd_args.editor_version)
+        replace_html_content()
