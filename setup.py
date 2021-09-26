@@ -1,6 +1,8 @@
 import os
+import platform
 
 from setuptools import find_packages, setup
+from distutils.version import StrictVersion
 
 
 DESCRIPTION = 'Swagger UI for Python web framework, such Tornado, Flask, Quart, Sanic and Falcon.'
@@ -26,9 +28,12 @@ def load_requirements():
 
 
 if __name__ == '__main__':
+    if StrictVersion(platform.python_version()) < StrictVersion('3.0.0'):
+        raise Exception("`swagger-ui-py` support python version >= 3.0.0 only.")
+
     setup(
         name='swagger-ui-py',
-        version='0.4.1',
+        version='0.4.2',
         description=DESCRIPTION,
         long_description=readme(),
         long_description_content_type='text/markdown',

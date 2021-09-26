@@ -1,8 +1,29 @@
-from .core import Interface as api_doc
-from .old import AiohttpInterface as aiohttp_api_doc
-from .old import FalconInterface as falcon_api_doc
-from .old import FlaskInterface as flask_api_doc
-from .old import QuartInterface as quart_api_doc
-from .old import SanicInterface as sanic_api_doc
-from .old import TornadoInterface as tornado_api_doc
-from .old import BottleInterface as bottle_api_doc
+import sys
+
+from swagger_ui import core
+from swagger_ui.handlers import supported_list
+
+
+def api_doc(app, **kwargs):
+    doc = core.ApplicationDocument(app, **kwargs)
+
+    handler = doc.match_handler()
+
+    if not handler:
+        raise Exception('No match application isinstance type!')
+
+    if not callable(handler):
+        raise Exception('handler is callable required!')
+
+    return handler(doc)
+
+
+def create_api_doc(app_type):
+    def _api_doc(app, **kwargs):
+        kwargs['app_type'] = app_type
+        return api_doc(app, **kwargs)
+    return _api_doc
+
+
+for name in supported_list:
+    setattr(sys.modules[__name__], '{}_api_doc'.format(name), create_api_doc(name))
