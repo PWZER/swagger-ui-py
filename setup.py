@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     setup(
         name='swagger-ui-py',
-        version='0.4.2',
+        version='21.09.27',
         description=DESCRIPTION,
         long_description=readme(),
         long_description_content_type='text/markdown',
