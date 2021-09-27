@@ -10,15 +10,20 @@ def handler(doc):
     async def swagger_config_handler(request):
         return web.json_response(doc.get_config(request.host))
 
-    doc.app.router.add_get(doc.uri(), swagger_doc_handler)
-    doc.app.router.add_get(doc.uri(r'/'), swagger_doc_handler)
+    doc.app.router.add_get(
+        doc.root_uri_absolute(slashes=True), swagger_doc_handler)
+    doc.app.router.add_get(
+        doc.root_uri_absolute(slashes=False), swagger_doc_handler)
 
     if doc.editor:
-        doc.app.router.add_get(doc.uri(r'/editor'), swagger_editor_handler)
-        doc.app.router.add_get(doc.uri(r'/editor/'), swagger_editor_handler)
+        doc.app.router.add_get(
+            doc.editor_uri_absolute(slashes=True), swagger_editor_handler)
+        doc.app.router.add_get(
+            doc.editor_uri_absolute(slashes=False), swagger_editor_handler)
 
-    doc.app.router.add_get(doc.uri(r'/swagger.json'), swagger_config_handler)
-    doc.app.router.add_static(doc.uri(r'/'), path='{}/'.format(doc.static_dir))
+    doc.app.router.add_get(
+        doc.swagger_json_uri_absolute, swagger_config_handler)
+    doc.app.router.add_static(doc.static_uri_absolute, path=doc.static_dir)
 
 
 def match(doc):

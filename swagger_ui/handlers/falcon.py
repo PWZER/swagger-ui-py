@@ -27,16 +27,24 @@ class FalconInterface(object):
                 resp.body = json.dumps(doc.get_config(f'{req.host}:{req.port}'))
 
         suffix = 'async' if self.use_async else None
-        doc.app.add_route(doc.uri(r''), SwaggerDocHandler(), suffix=suffix)
-        doc.app.add_route(doc.uri(r'/'), SwaggerDocHandler(), suffix=suffix)
+        doc.app.add_route(doc.root_uri_absolute(slashes=True),
+                          SwaggerDocHandler(), suffix=suffix)
+        doc.app.add_route(doc.root_uri_absolute(slashes=False),
+                          SwaggerDocHandler(), suffix=suffix)
 
         if doc.editor:
-            doc.app.add_route(doc.uri(r'/editor'), SwaggerEditorHandler(), suffix=suffix)
-            doc.app.add_route(doc.uri(r'/editor/'), SwaggerEditorHandler(), suffix=suffix)
+            doc.app.add_route(doc.editor_uri_absolute(slashes=True),
+                              SwaggerEditorHandler(), suffix=suffix)
+            doc.app.add_route(doc.editor_uri_absolute(slashes=False),
+                              SwaggerEditorHandler(), suffix=suffix)
 
-        doc.app.add_route(doc.uri(r'/swagger.json'), SwaggerConfigHandler(), suffix=suffix)
+        doc.app.add_route(doc.swagger_json_uri_absolute,
+                          SwaggerConfigHandler(), suffix=suffix)
         doc.app.add_static_route(
-            prefix=doc.uri(r'/'), directory='{}/'.format(doc.static_dir), downloadable=True)
+            prefix=doc.static_uri_absolute,
+            directory='{}/'.format(doc.static_dir),
+            downloadable=True,
+        )
 
 
 def match(doc):

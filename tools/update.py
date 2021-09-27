@@ -82,10 +82,10 @@ def replace_html_content():
             index_content = html_file.read()
 
         index_content = re.sub('<title>.*</title>', '<title> {{ title }} </title>', index_content)
-        index_content = re.sub('src="\\.(/dist)', 'src="{{ url_prefix }}', index_content)
-        index_content = re.sub('href="\\.(/dist)', 'href="{{ url_prefix }}', index_content)
-        index_content = re.sub('src="\\.', 'src="{{ url_prefix }}', index_content)
-        index_content = re.sub('href="\\.', 'href="{{ url_prefix }}', index_content)
+        index_content = re.sub('src="\\.(/dist)', 'src="{{ url_prefix }}/static', index_content)
+        index_content = re.sub('href="\\.(/dist)', 'href="{{ url_prefix }}/static', index_content)
+        index_content = re.sub('src="\\.', 'src="{{ url_prefix }}/static', index_content)
+        index_content = re.sub('href="\\.', 'href="{{ url_prefix }}/static', index_content)
         index_content = re.sub('https://petstore.swagger.io/v[1-9]/swagger.json',
                                '{{ config_url }}', index_content)
 

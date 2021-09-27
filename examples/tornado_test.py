@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # tornado_api_doc(app, config_path=config_path, url_prefix='/api/doc/')
 
     from swagger_ui import api_doc
-    api_doc(app, config_path=config_path, url_prefix='/api/doc/')
+    api_doc(app, config_path=config_path, url_prefix='/api/doc/', editor=True)
 
     app.listen(8989)
     tornado.ioloop.IOLoop.current().start()

@@ -14,14 +14,18 @@ def handler(doc):
             return self.write(doc.get_config(self.request.host))
 
     handlers = [
-        (doc.uri(r''), DocHandler),
-        (doc.uri(r'/'), DocHandler),
-        (doc.uri(r'/swagger.json'), ConfigHandler),
-        (doc.uri(r'/(.+)'), StaticFileHandler, {'path': doc.static_dir}),
+        (doc.root_uri_absolute(slashes=True), DocHandler),
+        (doc.root_uri_absolute(slashes=False), DocHandler),
+        (doc.swagger_json_uri_absolute, ConfigHandler),
+        (r'{}/(.+)'.format(doc.static_uri_absolute),
+         StaticFileHandler, {'path': doc.static_dir}),
     ]
 
     if doc.editor:
-        handlers.insert(1, (doc.uri(r'/editor'), EditorHandler))
+        handlers += [
+            (doc.editor_uri_absolute(slashes=True), EditorHandler),
+            (doc.editor_uri_absolute(slashes=False), EditorHandler),
+        ]
 
     doc.app.add_handlers(r'.*', handlers)
 

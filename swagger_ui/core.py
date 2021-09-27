@@ -12,8 +12,16 @@ from swagger_ui.handlers import supported_list
 
 class ApplicationDocument(object):
 
-    def __init__(self, app, app_type=None, config=None, config_path=None, config_url=None,
-                 config_spec=None, url_prefix='/api/doc', title='API doc', editor=False,
+    def __init__(self,
+                 app,
+                 app_type=None,
+                 config=None,
+                 config_path=None,
+                 config_url=None,
+                 config_spec=None,
+                 url_prefix=r'/api/doc',
+                 title='API doc',
+                 editor=False,
                  **extra_config):
         self.app = app
         self.app_type = app_type
@@ -26,7 +34,7 @@ class ApplicationDocument(object):
         self.config_url = config_url
         self.config_path = config_path
         self.config_spec = config_spec
-        assert (self.config or self.config_url or self.config_path or self.config_spec), \
+        assert self.config or self.config_url or self.config_path or self.config_spec, \
             'One of arguments "config", "config_path", "config_url" or "config_spec" is required!'
 
         self.env = Environment(
@@ -58,6 +66,34 @@ class ApplicationDocument(object):
     def uri(self, suffix=''):
         return r'{}{}'.format(self.url_prefix, suffix)
 
+    @property
+    def static_uri_relative(self):
+        return r'/static'
+
+    @property
+    def static_uri_absolute(self):
+        return self.uri(self.static_uri_relative)
+
+    @property
+    def swagger_json_uri_relative(self):
+        return r'/swagger.json'
+
+    @property
+    def swagger_json_uri_absolute(self):
+        return self.uri(self.swagger_json_uri_relative)
+
+    def root_uri_relative(self, slashes=False):
+        return r'/' if slashes else r''
+
+    def root_uri_absolute(self, slashes=False):
+        return self.uri(self.root_uri_relative(slashes))
+
+    def editor_uri_relative(self, slashes=False):
+        return r'/editor/' if slashes else r'/editor'
+
+    def editor_uri_absolute(self, slashes=False):
+        return self.uri(self.editor_uri_relative(slashes))
+
     def get_config(self, host):
         if self.config:
             config = self.config
@@ -72,7 +108,8 @@ class ApplicationDocument(object):
         elif self.config_spec:
             config = _load_config(self.config_spec)
 
-        if StrictVersion(config.get('openapi', '2.0.0')) >= StrictVersion('3.0.0'):
+        version = config.get('openapi', '2.0.0')
+        if StrictVersion(version) >= StrictVersion('3.0.0'):
             for server in config['servers']:
                 server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?',
                                        '//{}/'.format(host), server['url'])

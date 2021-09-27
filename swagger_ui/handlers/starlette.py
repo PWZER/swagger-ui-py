@@ -12,20 +12,34 @@ def handler(doc):
         host = '{}:{}'.format(request.url.hostname, request.url.port)
         return JSONResponse(doc.get_config(host))
 
-    doc.app.router.add_route(doc.uri(r''), swagger_doc_handler, ['get'], 'swagger-ui')
-    doc.app.router.add_route(doc.uri(r'/'), swagger_doc_handler, ['get'], 'swagger-ui')
+    doc.app.router.add_route(
+        doc.root_uri_absolute(slashes=True), swagger_doc_handler,
+        ['get'], 'swagger-ui',
+    )
+    doc.app.router.add_route(
+        doc.root_uri_absolute(slashes=False), swagger_doc_handler,
+        ['get'], 'swagger-ui',
+    )
 
     if doc.editor:
         doc.app.router.add_route(
-            doc.uri(r'/editor'), swagger_editor_handler, ['get'], 'swagger-editor')
+            doc.editor_uri_absolute(slashes=True), swagger_doc_handler,
+            ['get'], 'swagger-editor',
+        )
         doc.app.router.add_route(
-            doc.uri(r'/editor/'), swagger_editor_handler, ['get'], 'swagger-editor')
+            doc.editor_uri_absolute(slashes=False), swagger_doc_handler,
+            ['get'], 'swagger-editor',
+        )
 
     doc.app.router.add_route(
-        doc.uri(r'/swagger.json'), swagger_config_handler, ['get'], 'swagger-config')
+        doc.swagger_json_uri_absolute, swagger_config_handler,
+        ['get'], 'swagger-config',
+    )
     doc.app.router.mount(
-        doc.uri(r'/'), app=StaticFiles(directory='{}/'.format(doc.static_dir)),
-        name='swagger-static-files')
+        doc.static_uri_absolute,
+        app=StaticFiles(directory='{}/'.format(doc.static_dir)),
+        name='swagger-static-files',
+    )
 
 
 def match(doc):
