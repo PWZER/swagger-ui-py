@@ -14,6 +14,8 @@ Only support Python3.
 - [Falcon](https://falcon.readthedocs.io/en/stable/)
 - [Bottle](https://bottlepy.org/docs/dev/)
 
+> If you want to add supported frameworks, you can refer to [Flask Support](/swagger_ui/handlers/flask.py) or [Falcon Support](/swagger_ui/handlers/falcon.py), Implement the corresponding `handler` and `match` function.
+
 ## Usage
 
 - Install
@@ -98,6 +100,24 @@ Only support Python3.
   Open `http://<host>:<port>/api/doc/editor`, you can edit api doc config file.
 
   Open `http://<host>:<port>/api/doc` view api doc.
+
+## SwaggerUI Configuration
+
+  You can configure Swagger parameters using the dictionary, Both key and value are of type str, if value is JavaScript string, you need to wrap the quotes around it.
+  Such as `"layout": "\"StandaloneLayout\""`.
+
+  ```python
+  parameters = {
+      "deepLinking": "true",
+      "displayRequestDuration": "true",
+      "layout": "\"StandaloneLayout\"",
+      "plugins": "[SwaggerUIBundle.plugins.DownloadUrl]",
+      "presets": "[SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]",
+  }
+  api_doc(app, config_path='./config/test.yaml', parameters=parameters)
+  ```
+
+  For details about configuration parameters, see the official documentation [Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
 
 ## Swagger UI
 Swagger UI version is `v3.52.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).

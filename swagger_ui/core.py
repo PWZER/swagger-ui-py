@@ -1,3 +1,4 @@
+import copy
 import importlib
 import re
 import urllib.request
@@ -8,6 +9,16 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from swagger_ui.utils import SWAGGER_UI_PY_ROOT, _load_config
 from swagger_ui.handlers import supported_list
+
+
+_DefaultSwaggerUIBundleParameters = {
+    "dom_id": "\"#swagger-ui\"",
+    "deepLinking": "true",
+    "displayRequestDuration": "true",
+    "layout": "\"StandaloneLayout\"",
+    "plugins": "[SwaggerUIBundle.plugins.DownloadUrl]",
+    "presets": "[SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]",
+}
 
 
 class ApplicationDocument(object):
@@ -22,6 +33,7 @@ class ApplicationDocument(object):
                  url_prefix=r'/api/doc',
                  title='API doc',
                  editor=False,
+                 parameters={},
                  **extra_config):
         self.app = app
         self.app_type = app_type
@@ -36,6 +48,12 @@ class ApplicationDocument(object):
         self.config_spec = config_spec
         assert self.config or self.config_url or self.config_path or self.config_spec, \
             'One of arguments "config", "config_path", "config_url" or "config_spec" is required!'
+
+        # parameters
+        self.parameters = copy.deepcopy(_DefaultSwaggerUIBundleParameters)
+        if parameters:
+            self.parameters.update(parameters)
+        self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_absolute)
 
         self.env = Environment(
             loader=FileSystemLoader(
@@ -52,7 +70,8 @@ class ApplicationDocument(object):
         return self.env.get_template('doc.html').render(
             url_prefix=self.url_prefix,
             title=self.title,
-            config_url=self.uri(r'/swagger.json')
+            config_url=self.swagger_json_uri_absolute,
+            parameters=self.parameters,
         )
 
     @property
@@ -60,7 +79,8 @@ class ApplicationDocument(object):
         return self.env.get_template('editor.html').render(
             url_prefix=self.url_prefix,
             title=self.title,
-            config_url=self.uri(r'/swagger.json')
+            config_url=self.swagger_json_uri_absolute,
+            parameters=self.parameters,
         )
 
     def uri(self, suffix=''):

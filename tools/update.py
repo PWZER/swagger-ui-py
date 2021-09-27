@@ -9,12 +9,16 @@ from pathlib import Path
 import requests
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ui', action='store_true', help='Enabled to update swagger ui.')
-parser.add_argument('--editor', action='store_true', help='Enabled to update swagger editor.')
+parser.add_argument('--ui', action='store_true',
+                    help='Enabled to update swagger ui.')
+parser.add_argument('--editor', action='store_true',
+                    help='Enabled to update swagger editor.')
 parser.add_argument('--ui-version', type=str, default=None,
                     help='Specify the version of swagger ui, Default latest version.')
 parser.add_argument('--editor-version', type=str, default=None,
                     help='Specify the version of swagger editor, Default latest version.')
+parser.add_argument('--no-clean', action='store_true',
+                    help='disable auto clean the temporary files.')
 cmd_args = parser.parse_args()
 
 
@@ -52,15 +56,17 @@ def download_archive(repo, version):
     if version is None:
         version = detect_latest_release(repo)
 
-    file_name = '{}.tar.gz'.format(version)
+    file_name = '{}-{}.tar.gz'.format(repo.split('/')[1], version)
     save_path = cur_dir.joinpath(file_name)
-    archive_url = 'https://github.com/{}/archive/{}'.format(repo, file_name)
 
-    print('archive downloading: {}'.format(archive_url))
-    with requests.get(archive_url, stream=True) as resp:
-        assert resp.status_code == 200
-        with save_path.open('wb') as out:
-            shutil.copyfileobj(resp.raw, out)
+    if not (cmd_args.no_clean and save_path.exists()):
+        archive_url = 'https://github.com/{}/archive/{}'.format(repo, file_name)
+        print('archive downloading: {}'.format(archive_url))
+        with requests.get(archive_url, stream=True) as resp:
+            assert resp.status_code == 200
+            with save_path.open('wb') as out:
+                shutil.copyfileobj(resp.raw, out)
+        print('archive download completed: {}'.format(save_path))
 
     print('open tarfile: {}'.format(file_name))
     tar_file = tarfile.open(save_path)
@@ -69,28 +75,42 @@ def download_archive(repo, version):
 
     dist_copy(repo, swagger_ui_dir.joinpath('dist'))
 
-    print('remove {}'.format(swagger_ui_dir))
-    shutil.rmtree(swagger_ui_dir)
+    if not cmd_args.no_clean:
+        print('remove {}'.format(swagger_ui_dir))
+        shutil.rmtree(swagger_ui_dir)
 
-    print('remove {}'.format(save_path))
-    save_path.unlink()
+        print('remove {}'.format(save_path))
+        save_path.unlink()
+
+    print('Successed')
 
 
 def replace_html_content():
     for html_path in templates_dir.glob('**/*.html'):
         with html_path.open('r') as html_file:
-            index_content = html_file.read()
+            html_content = html_file.read()
 
-        index_content = re.sub('<title>.*</title>', '<title> {{ title }} </title>', index_content)
-        index_content = re.sub('src="\\.(/dist)', 'src="{{ url_prefix }}/static', index_content)
-        index_content = re.sub('href="\\.(/dist)', 'href="{{ url_prefix }}/static', index_content)
-        index_content = re.sub('src="\\.', 'src="{{ url_prefix }}/static', index_content)
-        index_content = re.sub('href="\\.', 'href="{{ url_prefix }}/static', index_content)
-        index_content = re.sub('https://petstore.swagger.io/v[1-9]/swagger.json',
-                               '{{ config_url }}', index_content)
+        html_content = re.sub(r'<title>.*</title>', '<title> {{ title }} </title>', html_content)
+        html_content = re.sub(r'src="\.(/dist)', 'src="{{ url_prefix }}/static', html_content)
+        html_content = re.sub(r'href="\.(/dist)', 'href="{{ url_prefix }}/static', html_content)
+        html_content = re.sub(r'src="\.', 'src="{{ url_prefix }}/static', html_content)
+        html_content = re.sub(r'href="\.', 'href="{{ url_prefix }}/static', html_content)
+        html_content = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json',
+                              '{{ config_url }}', html_content)
+
+        if str(html_path).endswith('doc.html'):
+            html_content = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json',
+                                  '{{ config_url }}', html_content)
+            content = '''const ui = SwaggerUIBundle({
+                {%- for key, value in parameters.items() %}
+                {{ key|safe }}: {{ value|safe }},
+                {%- endfor %}
+            });'''
+            html_content = re.sub(r'const ui = SwaggerUIBundle\({.*}\);$', content,
+                                  html_content, flags=re.MULTILINE | re.DOTALL)
 
         with html_path.open('w') as html_file:
-            html_file.write(index_content)
+            html_file.write(html_content)
 
 
 if __name__ == '__main__':
