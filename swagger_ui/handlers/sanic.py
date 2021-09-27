@@ -17,7 +17,8 @@ def handler(doc):
     async def swagger_blueprint_config_handler(request):
         return response.json(doc.get_config(request.host))
 
-    swagger_blueprint.static('/', str(doc.static_dir))
+    print(doc.static_dir)
+    swagger_blueprint.static('', str(doc.static_dir))
     doc.app.blueprint(swagger_blueprint)
 
 
