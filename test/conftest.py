@@ -1,11 +1,11 @@
-import os
+import socket
 import pytest
 
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(cur_dir, 'conf/test.yaml')
-
-
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def port():
-    return 8090
+    sock = socket.socket()
+    sock.bind(('', 0))
+    ip, port = sock.getsockname()
+    sock.close()
+    return port

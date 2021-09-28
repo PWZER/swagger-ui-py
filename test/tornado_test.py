@@ -1,9 +1,8 @@
-import time
 import pytest
 import requests
 from multiprocessing import Process
 
-from common import mode_list, kwargs_list
+from common import wait_port_listen, mode_list, kwargs_list
 
 
 def server_process(port, mode, **kwargs):
@@ -35,7 +34,7 @@ def test_tornado(port, mode, kwargs):
     proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
     proc.start()
 
-    time.sleep(1)
+    assert wait_port_listen(port), 'port: {} not listen!'.format(port)
 
     url_prefix = 'http://127.0.0.1:{}{}'.format(port, kwargs['url_prefix'])
     if url_prefix.endswith('/'):
