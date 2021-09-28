@@ -5,31 +5,30 @@ from common import send_requests, mode_list, kwargs_list
 
 
 def server_process(port, mode, **kwargs):
-    import tornado.ioloop
-    import tornado.web
+    from flask import Flask
 
-    class HelloWorldHandler(tornado.web.RequestHandler):
-        def get(self, *args, **kwargs):
-            return self.write('Hello World!!!')
+    app = Flask(__name__)
 
-    app = tornado.web.Application([
-        (r'/hello/world', HelloWorldHandler),
-    ])
+    @app.route(r'/hello/world')
+    def hello():
+        return 'Hello World!!!'
 
     if mode == 'auto':
         from swagger_ui import api_doc
         api_doc(app, **kwargs)
     else:
-        from swagger_ui import tornado_api_doc
-        tornado_api_doc(app, **kwargs)
+        from swagger_ui import flask_api_doc
+        flask_api_doc(app, **kwargs)
 
-    app.listen(port)
-    tornado.ioloop.IOLoop.current().start()
+    app.run(host='0.0.0.0', port=port)
 
 
 @pytest.mark.parametrize('mode', mode_list)
 @pytest.mark.parametrize('kwargs', kwargs_list)
-def test_tornado(port, mode, kwargs):
+def test_flask(port, mode, kwargs):
+    if kwargs['url_prefix'] in ('/', ''):
+        return
+
     proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
     proc.start()
     send_requests(port, mode, kwargs)

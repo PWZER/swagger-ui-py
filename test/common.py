@@ -1,6 +1,7 @@
 import sys
 import time
 import socket
+import requests
 from pathlib import Path
 
 cur_dir = Path(__file__).resolve().parent
@@ -16,6 +17,11 @@ kwargs_list = [
     {
         'url_prefix': '/api/doc',
         'config_path': config_path,
+    },
+    {
+        'url_prefix': '/api/doc',
+        'config_path': config_path,
+        'editor': True,
     },
     {
         'url_prefix': '/',
@@ -46,3 +52,29 @@ def wait_port_listen(port):
         time.sleep(0.1)
         counter += 1
     return False
+
+
+def send_requests(port, mode, kwargs):
+    assert wait_port_listen(port), 'port: {} not listen!'.format(port)
+
+    url_prefix = 'http://127.0.0.1:{}{}'.format(port, kwargs['url_prefix'])
+    if url_prefix.endswith('/'):
+        url_prefix = url_prefix[:-1]
+    server_url = 'http://127.0.0.1:{}/hello/world'.format(port)
+
+    # Step 1: test server
+    assert requests.get(server_url).status_code == 200
+
+    # Step 2: test root
+    assert requests.get(url_prefix).status_code == 200
+    assert requests.get(url_prefix + '/').status_code == 200
+
+    # Step 3: test static file
+    assert requests.get(url_prefix + '/static/LICENSE').status_code == 200
+
+    # Step 4: test editor
+    if kwargs.get('editor', False):
+        assert requests.get(url_prefix + '/editor').status_code == 200
+
+    # Step 5: test swagger.json
+    assert requests.get(url_prefix + '/swagger.json').status_code == 200
