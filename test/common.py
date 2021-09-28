@@ -1,8 +1,12 @@
+import sys
 import time
 import socket
 from pathlib import Path
 
 cur_dir = Path(__file__).resolve().parent
+
+sys.path.insert(1, str(cur_dir.parent))
+
 config_path = str(cur_dir.joinpath('conf/test3.yaml'))
 
 
