@@ -1,5 +1,6 @@
 import os
 import json
+import uvicorn
 import falcon.asgi
 
 
@@ -20,4 +21,4 @@ def create_app():
     return app
 
 
-# Run command: uvicorn --factory falcon_asgi_test:create_app --port 8989
+uvicorn.run(create_app(), host="0.0.0.0", port=8989, log_level="info")

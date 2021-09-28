@@ -25,4 +25,4 @@ routes = [
 app = Starlette(debug=True, routes=routes, on_startup=[startup])
 
 if __name__ == '__main__':
-    uvicorn.run("starlette_test:app", host="0.0.0.0", port=8989, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8989, log_level="info")
