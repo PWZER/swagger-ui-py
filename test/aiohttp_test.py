@@ -19,7 +19,7 @@ def server_process(port, mode, **kwargs):
     else:
         from swagger_ui import aiohttp_api_doc
         aiohttp_api_doc(app, **kwargs)
-    web.run_app(app, port=port)
+    web.run_app(app, host='localhost', port=port)
 
 
 @pytest.mark.parametrize('mode', mode_list)

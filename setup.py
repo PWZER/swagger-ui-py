@@ -7,10 +7,11 @@ from distutils.version import StrictVersion
 
 DESCRIPTION = 'Swagger UI for Python web framework, such Tornado, Flask, Quart, Sanic and Falcon.'
 
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def load_package_data():
     package_data = []
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
     for data_dir in ['static', 'templates']:
         for file_name in os.listdir(os.path.join(cur_dir, 'swagger_ui', data_dir)):
             package_data.append(data_dir + '/' + file_name)
@@ -23,7 +24,7 @@ def readme():
 
 
 def load_requirements():
-    with open('./requirements.txt') as requirements_file:
+    with open(os.path.join(cur_dir, 'requirements.txt')) as requirements_file:
         return [r.strip() for r in requirements_file.read().split()]
 
 
@@ -38,10 +39,15 @@ if __name__ == '__main__':
         long_description=readme(),
         long_description_content_type='text/markdown',
         license='Apache License 2.0',
-        include_package_data=True,
+        # include_package_data=True,
         packages=find_packages(),
         package_data=load_package_data(),
-        install_requires=load_requirements(),
+        install_requires=[
+            "jinja2>=2.0",
+            "PyYaml>=5.0",
+        ],
+        tests_requires=[
+        ],
         url='https://github.com/PWZER/swagger-ui-py',
         author='PWZER',
         author_email='pwzergo@gmail.com',

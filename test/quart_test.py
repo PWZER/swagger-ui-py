@@ -19,7 +19,7 @@ def server_process(port, mode, **kwargs):
     else:
         from swagger_ui import quart_api_doc
         quart_api_doc(app, **kwargs)
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='localhost', port=port)
 
 
 @pytest.mark.parametrize('mode', mode_list)

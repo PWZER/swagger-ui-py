@@ -23,7 +23,7 @@ def server_process(port, mode, **kwargs):
         from swagger_ui import tornado_api_doc
         tornado_api_doc(app, **kwargs)
 
-    app.listen(port)
+    app.listen(address='localhost', port=port)
     tornado.ioloop.IOLoop.current().start()
 
 

@@ -28,7 +28,7 @@ def server_process(port, mode, **kwargs):
         from swagger_ui import falcon_api_doc
         falcon_api_doc(app, **kwargs)
 
-    httpd = simple_server.make_server('0.0.0.0', port, app)
+    httpd = simple_server.make_server('localhost', port, app)
     httpd.serve_forever()
 
 

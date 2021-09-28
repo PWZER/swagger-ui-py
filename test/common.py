@@ -57,10 +57,10 @@ def wait_port_listen(port):
 def send_requests(port, mode, kwargs):
     assert wait_port_listen(port), 'port: {} not listen!'.format(port)
 
-    url_prefix = 'http://127.0.0.1:{}{}'.format(port, kwargs['url_prefix'])
+    url_prefix = 'http://localhost:{}{}'.format(port, kwargs['url_prefix'])
     if url_prefix.endswith('/'):
         url_prefix = url_prefix[:-1]
-    server_url = 'http://127.0.0.1:{}/hello/world'.format(port)
+    server_url = 'http://localhost:{}/hello/world'.format(port)
 
     # Step 1: test server
     assert requests.get(server_url).status_code == 200

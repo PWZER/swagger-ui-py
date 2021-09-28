@@ -27,7 +27,7 @@ def server_process(port, mode, **kwargs):
     ]
 
     app = Starlette(debug=True, routes=routes, on_startup=[startup])
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    uvicorn.run(app, host="localhost", port=port, log_level="info")
 
 
 @pytest.mark.parametrize('mode', mode_list)

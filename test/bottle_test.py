@@ -19,7 +19,7 @@ def server_process(port, mode, **kwargs):
     else:
         from swagger_ui import bottle_api_doc
         bottle_api_doc(app, **kwargs)
-    run(app, host='0.0.0.0', port=port)
+    run(app, host='localhost', port=port)
 
 
 @pytest.mark.parametrize('mode', mode_list)

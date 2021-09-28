@@ -20,7 +20,7 @@ def server_process(port, mode, **kwargs):
         from swagger_ui import flask_api_doc
         flask_api_doc(app, **kwargs)
 
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='localhost', port=port)
 
 
 @pytest.mark.parametrize('mode', mode_list)
