@@ -1,9 +1,12 @@
 ![tests](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)
+![Version](https://badge.fury.io/gh/PWZER%2Fswagger-ui-py.svg)
 
 # swagger-ui-py
 Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp, Sanic and Falcon.
 
 Only support Python3.
+
+[swagger-ui-py](https://pwzer.github.io/swagger-ui-py/)
 
 ## Supported
 
