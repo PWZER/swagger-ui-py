@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: tests
 
 on: [push, pull_request]
 
@@ -15,6 +15,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
-    - run: pip install flake8 pytest requests uvicorn tornado flask falcon aiohttp bottle sanic quart starlette
+    - run: pip install flake8 -r test/requirements.txt
     - run: flake8
     - run: pytest -s test/

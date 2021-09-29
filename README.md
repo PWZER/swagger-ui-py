@@ -1,3 +1,5 @@
+![tests](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)
+
 # swagger-ui-py
 Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp, Sanic and Falcon.
 
