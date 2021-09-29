@@ -1,5 +1,8 @@
-![tests](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)
-![Version](https://badge.fury.io/gh/PWZER%2Fswagger-ui-py.svg)
+[![tests](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml/badge.svg)](https://github.com/PWZER/swagger-ui-py/actions/workflows/lint-and-pytest.yml)
+[![Version](https://badge.fury.io/gh/PWZER%2Fswagger-ui-py.svg)](https://github.com/PWZER/swagger-ui-py/tags)
+
+[![PyPi Version](https://img.shields.io/pypi/v/swagger-ui-py.svg)](https://pypi.org/project/swagger-ui-py/)
+[![PyPi Downloads](https://pepy.tech/badge/swagger-ui-py)](https://pepy.tech/project/swagger-ui-py)
 
 # swagger-ui-py
 Swagger UI for Python web framework, such Tornado, Flask, Quart, aiohttp, Sanic and Falcon.
