@@ -127,7 +127,7 @@ Only support Python3.
   For details about configuration parameters, see the official documentation [Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
 
 ## Swagger UI
-Swagger UI version is `v3.52.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `v3.52.4`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
 Swagger Editor version is `v3.18.2`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
