@@ -21,6 +21,8 @@ Only support Python3.
 - [Falcon](https://falcon.readthedocs.io/en/stable/)
 - [Bottle](https://bottlepy.org/docs/dev/)
 
+You can print supported list use command `python3 -c "from swagger_ui import supported_list; print(supported_list)"`
+
 > If you want to add supported frameworks, you can refer to [Flask Support](/swagger_ui/handlers/flask.py) or [Falcon Support](/swagger_ui/handlers/falcon.py), Implement the corresponding `handler` and `match` function.
 
 ## Usage
