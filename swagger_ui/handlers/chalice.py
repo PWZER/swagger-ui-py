@@ -8,7 +8,6 @@ def handler(doc):
     bp = Blueprint(__name__)
 
     @bp.route(doc.root_uri_relative(slashes=True), methods=["GET"])
-    # @bp.route(doc.root_uri_relative(slashes=False), methods=["GET"])
     def bp_doc_handler():
         return Response(
             doc.doc_html,
@@ -26,16 +25,13 @@ def handler(doc):
 
     if doc.editor:
         @bp.route(doc.editor_uri_relative(slashes=True), methods=["GET"])
-        # @bp.route(doc.editor_uri_relative(slashes=False), methods=["GET"])
         def bp_editor_handler():
             return doc.editor_html
 
-    @bp.route(doc.static_uri_relative + "/{path}", methods=["GET"])
+    @bp.route(doc.static_uri_relative + r"/{path}", methods=["GET"])
     def bp_static_handler(path):
-        # request = doc.app.current_request
         static_file_path = static_dir.joinpath(path)
         if static_file_path.is_file():
-            # Content-Type
             content_type = "application/json"
             if static_file_path.suffix in [".png", ".ico"]:
                 content_type = "image/png"
@@ -45,7 +41,6 @@ def handler(doc):
                 content_type = "text/css"
             if static_file_path.suffix in [".js"]:
                 content_type = "text/javascript"
-
             return Response(
                 body=static_file_path.read_bytes(),
                 status_code=200,
