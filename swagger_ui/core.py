@@ -130,7 +130,7 @@ class ApplicationDocument(object):
 
         version = config.get('openapi', '2.0.0')
         if StrictVersion(version) >= StrictVersion('3.0.0'):
-            for server in config['servers']:
+            for server in config.get('servers', []):
                 server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?',
                                        '//{}/'.format(host), server['url'])
         elif 'host' not in config:

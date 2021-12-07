@@ -56,14 +56,14 @@ def download_archive(repo, version):
     if version is None:
         version = detect_latest_release(repo)
 
-    file_name = '{}-{}.tar.gz'.format(repo.split('/')[1], version)
+    file_name = '{}.tar.gz'.format(version)
     save_path = cur_dir.joinpath(file_name)
 
     if not (cmd_args.no_clean and save_path.exists()):
         archive_url = 'https://github.com/{}/archive/{}'.format(repo, file_name)
         print('archive downloading: {}'.format(archive_url))
         with requests.get(archive_url, stream=True) as resp:
-            assert resp.status_code == 200
+            assert resp.status_code == 200, resp.status_code
             with save_path.open('wb') as out:
                 shutil.copyfileobj(resp.raw, out)
         print('archive download completed: {}'.format(save_path))

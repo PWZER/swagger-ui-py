@@ -21,6 +21,12 @@ Only support Python3.
 - [Falcon](https://falcon.readthedocs.io/en/stable/)
 - [Bottle](https://bottlepy.org/docs/dev/)
 
+You can print supported list use command
+
+```bash
+python3 -c "from swagger_ui import supported_list; print(supported_list)"
+```
+
 > If you want to add supported frameworks, you can refer to [Flask Support](/swagger_ui/handlers/flask.py) or [Falcon Support](/swagger_ui/handlers/falcon.py), Implement the corresponding `handler` and `match` function.
 
 ## Usage
@@ -127,16 +133,14 @@ Only support Python3.
   For details about configuration parameters, see the official documentation [Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
 
 ## Swagger UI
-Swagger UI version is `v3.52.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `v4.1.2`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
-Swagger Editor version is `v3.18.2`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+Swagger Editor version is `v4.0.2`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
 
 ## Update
 You can update swagger ui and swagger editor version with
 
 ```bash
-cd swagger-ui-py/tools
-
-python update.py --ui --editor
+python3 tools/update.py --ui --editor
 ```
