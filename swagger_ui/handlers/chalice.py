@@ -10,12 +10,9 @@ def handler(doc):
     @bp.route(doc.root_uri_relative(slashes=True), methods=["GET"])
     def bp_doc_handler():
         return Response(
-            doc.doc_html,
+            body=doc.doc_html,
             status_code=200,
-            headers={
-                "Content-Type": "text/html",
-                "Access-Control-Allow-Origin": "*",
-            },
+            headers={"Content-Type": "text/html"},
         )
 
     @bp.route(doc.swagger_json_uri_relative, methods=["GET"])
@@ -26,7 +23,11 @@ def handler(doc):
     if doc.editor:
         @bp.route(doc.editor_uri_relative(slashes=True), methods=["GET"])
         def bp_editor_handler():
-            return doc.editor_html
+            return Response(
+                body=doc.editor_html,
+                status_code=200,
+                headers={"Content-Type": "text/html"},
+            )
 
     @bp.route(doc.static_uri_relative + r"/{path}", methods=["GET"])
     def bp_static_handler(path):

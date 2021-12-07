@@ -9,3 +9,4 @@ bottle
 sanic
 quart
 starlette
+chalice
