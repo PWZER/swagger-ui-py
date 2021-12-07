@@ -3,7 +3,7 @@ def handler(doc):
     from flask.blueprints import Blueprint
 
     swagger_blueprint = Blueprint(
-        'swagger_blueprint',
+        doc.blueprint_name,
         __name__,
         url_prefix=doc.url_prefix,
         static_folder=doc.static_dir,

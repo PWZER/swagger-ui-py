@@ -3,7 +3,7 @@ def handler(doc):
     from sanic.blueprints import Blueprint
 
     swagger_blueprint = Blueprint(
-        'swagger_blueprint',
+        doc.blueprint_name,
         url_prefix=doc.url_prefix,
         strict_slashes=False,
     )

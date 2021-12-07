@@ -3,7 +3,7 @@ def handler(doc):
     from quart.json import jsonify
 
     swagger_blueprint = Blueprint(
-        'swagger_blueprint',
+        doc.blueprint_name,
         __name__,
         url_prefix=doc.url_prefix,
         static_url_path=doc.static_uri_relative,

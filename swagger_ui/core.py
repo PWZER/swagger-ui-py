@@ -62,6 +62,10 @@ class ApplicationDocument(object):
         )
 
     @property
+    def blueprint_name(self):
+        return 'bp{}'.format(self.url_prefix.replace('/', '_'))
+
+    @property
     def static_dir(self):
         return str(SWAGGER_UI_PY_ROOT.joinpath('static'))
 
