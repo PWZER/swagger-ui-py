@@ -20,6 +20,7 @@ Only support Python3.
 - [Starlette](https://www.starlette.io/)
 - [Falcon](https://falcon.readthedocs.io/en/stable/)
 - [Bottle](https://bottlepy.org/docs/dev/)
+- [Chalice](https://aws.github.io/chalice/index.html)
 
 You can print supported list use command
 
