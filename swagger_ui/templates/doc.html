@@ -37,16 +37,22 @@
     <script src="{{ url_prefix }}/static/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
     window.onload = function() {
-      // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
-                {%- for key, value in parameters.items() %}
-                {{ key|safe }}: {{ value|safe }},
-                {%- endfor %}
-            });
-      // End Swagger UI call region
+    const ui = SwaggerUIBundle({
+        {%- for key, value in parameters.items() %}
+        {{ key|safe }}: {{ value|safe }},
+        {%- endfor %}
+    });
 
-      window.ui = ui;
-    };
+    {% if oauth2_config %}
+    ui.initOAuth({
+        {%- for key, value in oauth2_config.items() %}
+        {{ key|safe }}: {{ value|safe }},
+        {%- endfor %}
+    });
+    {% endif %}
+
+    window.ui = ui;
+};
   </script>
   </body>
 </html>

@@ -26,6 +26,25 @@ SWAGGER_UI_REPO = 'swagger-api/swagger-ui'
 SWAGGER_EDITOR_REPO = 'swagger-api/swagger-editor'
 
 
+DOC_HTML_JAVASCRIPT = '''window.onload = function() {
+    const ui = SwaggerUIBundle({
+        {%- for key, value in parameters.items() %}
+        {{ key|safe }}: {{ value|safe }},
+        {%- endfor %}
+    });
+
+    {% if oauth2_config %}
+    ui.initOAuth({
+        {%- for key, value in oauth2_config.items() %}
+        {{ key|safe }}: {{ value|safe }},
+        {%- endfor %}
+    });
+    {% endif %}
+
+    window.ui = ui;
+};'''
+
+
 def detect_latest_release(repo):
     print('detect latest release')
     resp = requests.get('https://api.github.com/repos/{}/releases/latest'.format(repo), timeout=120)
@@ -101,12 +120,7 @@ def replace_html_content():
         if str(html_path).endswith('doc.html'):
             html_content = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json',
                                   '{{ config_url }}', html_content)
-            content = '''const ui = SwaggerUIBundle({
-                {%- for key, value in parameters.items() %}
-                {{ key|safe }}: {{ value|safe }},
-                {%- endfor %}
-            });'''
-            html_content = re.sub(r'const ui = SwaggerUIBundle\({.*}\);$', content,
+            html_content = re.sub(r'window.onload = function\(\) {.*};$', DOC_HTML_JAVASCRIPT,
                                   html_content, flags=re.MULTILINE | re.DOTALL)
 
         with html_path.open('w') as html_file:

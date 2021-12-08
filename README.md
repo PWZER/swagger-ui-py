@@ -131,7 +131,27 @@ python3 -c "from swagger_ui import supported_list; print(supported_list)"
   api_doc(app, config_path='./config/test.yaml', parameters=parameters)
   ```
 
-  For details about configuration parameters, see the official documentation [Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
+  For details about parameters configuration, see the official documentation [Parameters Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
+
+## OAuth2 Configuration
+
+  The format is similar to `parameters`.
+
+  ```python
+  oauth2_config = {
+      "clientId": "\"your-client-id\"",
+      "clientSecret": "\"your-client-secret-if-required\"",
+      "realm": "\"your-realms\"",
+      "appName": "\"your-app-name\"",
+      "scopeSeparator": "\" \"",
+      "scopes": "\"openid profile\"",
+      "additionalQueryStringParams": "{test: \"hello\"}",
+      "usePkceWithAuthorizationCodeGrant": True,
+  }
+  api_doc(app, config_path='./config/test.yaml', oauth2_config=oauth2_config)
+  ```
+
+  For details about OAuth2 configuration, see the official documentation [OAuth2 Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/).
 
 ## Swagger UI
 Swagger UI version is `v4.1.2`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).

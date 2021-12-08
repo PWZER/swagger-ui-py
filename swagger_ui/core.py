@@ -34,6 +34,7 @@ class ApplicationDocument(object):
                  title='API doc',
                  editor=False,
                  parameters={},
+                 oauth2_config={},
                  **extra_config):
         self.app = app
         self.app_type = app_type
@@ -54,6 +55,9 @@ class ApplicationDocument(object):
         if parameters:
             self.parameters.update(parameters)
         self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_absolute)
+
+        # oauth2_config
+        self.oauth2_config = oauth2_config
 
         self.env = Environment(
             loader=FileSystemLoader(
@@ -76,6 +80,7 @@ class ApplicationDocument(object):
             title=self.title,
             config_url=self.swagger_json_uri_absolute,
             parameters=self.parameters,
+            oauth2_config=self.oauth2_config,
         )
 
     @property
