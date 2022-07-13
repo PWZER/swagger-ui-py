@@ -1,6 +1,16 @@
 name: tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - README.md
+      - 'tools/**'
+  pull_request:
+    paths-ignore:
+      - README.md
+      - 'tools/**'
 
 jobs:
   lint-and-pytest:
