@@ -42,3 +42,9 @@ def test_falcon(port, mode, kwargs):
     proc.start()
     send_requests(port, mode, kwargs)
     proc.terminate()
+
+
+if __name__ == '__main__':
+    kwargs = dict(url_prefix='/api/doc', config_path='conf/test3.yaml')
+    # server_process(8090, 'auto', **kwargs)
+    server_process(8090, None, **kwargs)

@@ -4,7 +4,7 @@ info:
   description: python-swagger-ui test api
   version: 1.0.0
 servers:
-- url: http://127.0.0.1:8989/api
+- url: http://127.0.0.1:8989/
 tags:
 - name: default
   description: default tag

@@ -47,7 +47,9 @@ DOC_HTML_JAVASCRIPT = '''window.onload = function() {
 
 def detect_latest_release(repo):
     print('detect latest release')
-    resp = requests.get('https://api.github.com/repos/{}/releases/latest'.format(repo), timeout=120)
+    resp = requests.get(
+        'https://api.github.com/repos/{}/releases/latest'.format(repo),
+        timeout=120)
     latest = json.loads(resp.text)
     tag = latest['tag_name']
     print('{} latest version is {}'.format(repo, tag))
@@ -59,16 +61,26 @@ def dist_copy(repo, dist_dir):
     if repo == SWAGGER_UI_REPO:
         index_html_path = dist_dir.joinpath('index.html')
         dst_path = templates_dir.joinpath('doc.html')
+
+        # license file
+        license_path = dist_dir.parent.joinpath("LICENSE")
+        dst_license_path = templates_dir.joinpath("LICENSE")
+        if license_path.exists():
+            shutil.copyfile(license_path, dst_license_path)
+        print('copy {} => {}'.format(license_path, dst_license_path))
     elif repo == SWAGGER_EDITOR_REPO:
         index_html_path = dist_dir.parent.joinpath('index.html')
         dst_path = templates_dir.joinpath('editor.html')
 
-    shutil.copyfile(str(index_html_path), str(dst_path))
+    shutil.copyfile(index_html_path, dst_path)
+    print('copy {} => {}'.format(index_html_path, dst_path))
 
     for path in dist_dir.glob('**/*'):
-        if path.suffix == '.html':
+        if path.name == 'index.html':
             continue
-        shutil.copyfile(str(path), str(path).replace(str(dist_dir), str(static_dir)))
+        dst_path = static_dir.joinpath(path.relative_to(dist_dir))
+        shutil.copyfile(path, dst_path)
+        print('copy {} => {}'.format(path, dst_path))
 
 
 def download_archive(repo, version):
@@ -102,40 +114,65 @@ def download_archive(repo, version):
         save_path.unlink()
 
     print('Successed')
+    return version
 
 
 def replace_html_content():
     for html_path in templates_dir.glob('**/*.html'):
+        print(html_path)
         with html_path.open('r') as html_file:
-            html_content = html_file.read()
+            html = html_file.read()
 
-        html_content = re.sub(r'<title>.*</title>', '<title> {{ title }} </title>', html_content)
-        html_content = re.sub(r'src="\.(/dist)', 'src="{{ url_prefix }}/static', html_content)
-        html_content = re.sub(r'href="\.(/dist)', 'href="{{ url_prefix }}/static', html_content)
-        html_content = re.sub(r'src="\.', 'src="{{ url_prefix }}/static', html_content)
-        html_content = re.sub(r'href="\.', 'href="{{ url_prefix }}/static', html_content)
-        html_content = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json',
-                              '{{ config_url }}', html_content)
+        html = re.sub(r'<title>.*</title>', '<title> {{ title }} </title>', html)
+        html = re.sub(r'src="(\./dist/|\./|(?!{{))', 'src="{{ url_prefix }}/static/', html)
+        html = re.sub(r'href="(\./dist/|\./|(?!{{))', 'href="{{ url_prefix }}/static/', html)
+        html = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json', '{{ config_url }}', html)
 
         if str(html_path).endswith('doc.html'):
-            html_content = re.sub(r'https://petstore.swagger.io/v[1-9]/swagger.json',
-                                  '{{ config_url }}', html_content)
-            html_content = re.sub(r'window.onload = function\(\) {.*};$', DOC_HTML_JAVASCRIPT,
-                                  html_content, flags=re.MULTILINE | re.DOTALL)
+            html = re.sub(r'window.onload = function\(\) {.*};$', DOC_HTML_JAVASCRIPT, html,
+                          flags=re.MULTILINE | re.DOTALL)
+            html = re.sub(r'<script .*/swagger-initializer.js".*</script>',
+                          '<script>\n{}\n</script>'.format(DOC_HTML_JAVASCRIPT),
+                          html)
 
         with html_path.open('w') as html_file:
-            html_file.write(html_content)
+            html_file.write(html)
+
+
+def replace_readme(ui_version, editor_version):
+    readme_path = cur_dir.parent.joinpath("README.md")
+    readme = readme_path.read_text(encoding="utf-8")
+    if ui_version:
+        readme = re.sub(r'Swagger UI version is `.*`',
+                        'Swagger UI version is `{}`'.format(ui_version), readme)
+        print('update swagger ui version: {}'.format(ui_version))
+    if editor_version:
+        readme = re.sub(r'Swagger Editor version is `.*`',
+                        'Swagger Editor version is `{}`'.format(editor_version), readme)
+        print('update swagger editor version: {}'.format(editor_version))
+    readme_path.write_text(readme)
 
 
 if __name__ == '__main__':
     cur_dir = Path(__file__).resolve().parent
+
     static_dir = cur_dir.parent.joinpath('swagger_ui/static')
+    if static_dir.exists():
+        shutil.rmtree(static_dir)
+    static_dir.mkdir(parents=True, exist_ok=True)
+
     templates_dir = cur_dir.parent.joinpath('swagger_ui/templates')
+    if templates_dir.exists():
+        shutil.rmtree(templates_dir)
+    templates_dir.mkdir(parents=True, exist_ok=True)
+
+    ui_version = editor_version = None
 
     if cmd_args.ui:
-        download_archive(SWAGGER_UI_REPO, cmd_args.ui_version)
+        ui_version = download_archive(SWAGGER_UI_REPO, cmd_args.ui_version)
         replace_html_content()
 
     if cmd_args.editor:
-        download_archive(SWAGGER_EDITOR_REPO, cmd_args.editor_version)
+        editor_version = download_archive(SWAGGER_EDITOR_REPO, cmd_args.editor_version)
         replace_html_content()
+    replace_readme(ui_version, editor_version)
