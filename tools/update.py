@@ -63,8 +63,8 @@ def dist_copy(repo, dist_dir):
         dst_path = templates_dir.joinpath('doc.html')
 
         # license file
-        license_path = dist_dir.parent.joinpath("LICENSE")
-        dst_license_path = templates_dir.joinpath("LICENSE")
+        license_path = dist_dir.parent.joinpath('LICENSE')
+        dst_license_path = static_dir.joinpath('LICENSE')
         if license_path.exists():
             shutil.copyfile(license_path, dst_license_path)
         print('copy {} => {}'.format(license_path, dst_license_path))
@@ -140,8 +140,8 @@ def replace_html_content():
 
 
 def replace_readme(ui_version, editor_version):
-    readme_path = cur_dir.parent.joinpath("README.md")
-    readme = readme_path.read_text(encoding="utf-8")
+    readme_path = cur_dir.parent.joinpath('README.md')
+    readme = readme_path.read_text(encoding='utf-8')
     if ui_version:
         readme = re.sub(r'Swagger UI version is `.*`',
                         'Swagger UI version is `{}`'.format(ui_version), readme)
