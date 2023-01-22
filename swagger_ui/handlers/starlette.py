@@ -31,10 +31,11 @@ def handler(doc):
             ['get'], 'swagger-editor',
         )
 
-    doc.app.router.add_route(
-        doc.swagger_json_uri_absolute, swagger_config_handler,
-        ['get'], 'swagger-config',
-    )
+    if doc.config_rel_url is None:
+        doc.app.router.add_route(
+            doc.swagger_json_uri_absolute, swagger_config_handler,
+            ['get'], 'swagger-config',
+        )
     doc.app.router.mount(
         doc.static_uri_absolute,
         app=StaticFiles(directory='{}/'.format(doc.static_dir)),

@@ -17,9 +17,10 @@ def handler(doc):
         async def swagger_blueprint_editor_handler(request):
             return response.html(doc.editor_html)
 
-    @swagger_blueprint.get(doc.swagger_json_uri_relative)
-    async def swagger_blueprint_config_handler(request):
-        return response.json(doc.get_config(request.host))
+    if doc.config_rel_url is None:
+        @swagger_blueprint.get(doc.swagger_json_uri_relative)
+        async def swagger_blueprint_config_handler(request):
+            return response.json(doc.get_config(request.host))
 
     swagger_blueprint.static(doc.static_uri_relative, doc.static_dir)
     doc.app.blueprint(swagger_blueprint)

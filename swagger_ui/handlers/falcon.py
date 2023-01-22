@@ -38,8 +38,9 @@ class FalconInterface(object):
             doc.app.add_route(doc.editor_uri_absolute(slashes=False),
                               SwaggerEditorHandler(), suffix=suffix)
 
-        doc.app.add_route(doc.swagger_json_uri_absolute,
-                          SwaggerConfigHandler(), suffix=suffix)
+        if doc.config_rel_url is None:
+            doc.app.add_route(doc.swagger_json_uri_absolute,
+                            SwaggerConfigHandler(), suffix=suffix)
         doc.app.add_static_route(
             prefix=doc.static_uri_absolute,
             directory='{}/'.format(doc.static_dir),

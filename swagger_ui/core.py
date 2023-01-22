@@ -30,6 +30,7 @@ class ApplicationDocument(object):
                  config_path=None,
                  config_url=None,
                  config_spec=None,
+                 config_rel_url=None,
                  url_prefix=r'/api/doc',
                  title='API doc',
                  editor=False,
@@ -47,8 +48,10 @@ class ApplicationDocument(object):
         self.config_url = config_url
         self.config_path = config_path
         self.config_spec = config_spec
-        assert self.config or self.config_url or self.config_path or self.config_spec, \
-            'One of arguments "config", "config_path", "config_url" or "config_spec" is required!'
+        self.config_rel_url = config_rel_url
+        assert self.config or self.config_url or self.config_path or self.config_spec or self.config_rel_url, \
+            'One of arguments "config", "config_path", "config_url", "config_spec" or "config_rel_url" is required!'
+
 
         # parameters
         self.parameters = copy.deepcopy(_DefaultSwaggerUIBundleParameters)
@@ -105,7 +108,7 @@ class ApplicationDocument(object):
 
     @property
     def swagger_json_uri_relative(self):
-        return r'/swagger.json'
+        return self.config_rel_url or r'/swagger.json'
 
     @property
     def swagger_json_uri_absolute(self):
