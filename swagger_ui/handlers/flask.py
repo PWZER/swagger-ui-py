@@ -1,5 +1,5 @@
 def handler(doc):
-    from flask import request, jsonify
+    from flask import jsonify, request
     from flask.blueprints import Blueprint
 
     swagger_blueprint = Blueprint(

@@ -1,9 +1,9 @@
 import os
-import uvicorn
 
+import uvicorn
 from starlette.applications import Starlette
-from starlette.routing import Route
 from starlette.responses import PlainTextResponse
+from starlette.routing import Route
 
 
 def hello_world(request):

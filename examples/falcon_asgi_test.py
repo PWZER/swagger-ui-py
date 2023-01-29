@@ -1,7 +1,8 @@
-import os
 import json
-import uvicorn
+import os
+
 import falcon.asgi
+import uvicorn
 
 
 class HelloWorldResource(object):

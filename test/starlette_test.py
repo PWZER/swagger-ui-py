@@ -1,15 +1,14 @@
-import pytest
 from multiprocessing import Process
 
-from common import send_requests, mode_list, kwargs_list
+import pytest
+from common import kwargs_list, mode_list, send_requests
 
 
 def server_process(port, mode, **kwargs):
     import uvicorn
-
     from starlette.applications import Starlette
-    from starlette.routing import Route
     from starlette.responses import PlainTextResponse
+    from starlette.routing import Route
 
     def hello_world(request):
         return PlainTextResponse('Hello World!!!')

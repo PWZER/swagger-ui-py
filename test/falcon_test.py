@@ -1,14 +1,15 @@
-import pytest
 from multiprocessing import Process
 
-from common import send_requests, mode_list, kwargs_list
+import pytest
+from common import kwargs_list, mode_list, send_requests
 
 
 def server_process(port, mode, **kwargs):
     import json
-    import falcon
     from distutils.version import StrictVersion
     from wsgiref import simple_server
+
+    import falcon
 
     class HelloWorldResource(object):
         def on_get(self, req, resp):

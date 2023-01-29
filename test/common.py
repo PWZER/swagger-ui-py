@@ -1,7 +1,8 @@
-import time
 import socket
-import requests
+import time
 from pathlib import Path
+
+import requests
 
 cur_dir = Path(__file__).resolve().parent
 
@@ -26,6 +27,11 @@ kwargs_list = [
     {
         'url_prefix': '',
         'config_path': config_path,
+    },
+    {
+        'url_prefix': '/',
+        'config_path': config_path,
+        'config_rel_url': '/swagger.json',
     },
 ]
 

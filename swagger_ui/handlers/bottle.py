@@ -1,5 +1,5 @@
 def handler(doc):
-    from bottle import static_file, request
+    from bottle import request, static_file
 
     @doc.app.get(doc.root_uri_absolute(slashes=True))
     @doc.app.get(doc.root_uri_absolute(slashes=False))

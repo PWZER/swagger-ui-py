@@ -1,9 +1,9 @@
-import os
 import json
+import os
+from distutils.version import StrictVersion
 from wsgiref import simple_server
 
 import falcon
-from distutils.version import StrictVersion
 
 
 class HelloWorldResource(object):

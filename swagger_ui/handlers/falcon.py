@@ -39,8 +39,7 @@ class FalconInterface(object):
                               SwaggerEditorHandler(), suffix=suffix)
 
         if doc.config_rel_url is None:
-            doc.app.add_route(doc.swagger_json_uri_absolute,
-                            SwaggerConfigHandler(), suffix=suffix)
+            doc.app.add_route(doc.swagger_json_uri_absolute, SwaggerConfigHandler(), suffix=suffix)
         doc.app.add_static_route(
             prefix=doc.static_uri_absolute,
             directory='{}/'.format(doc.static_dir),
@@ -50,8 +49,9 @@ class FalconInterface(object):
 
 def match(doc):
     try:
-        import falcon
         from distutils.version import StrictVersion
+
+        import falcon
 
         interface = None
         if StrictVersion(falcon.__version__) >= StrictVersion('3.0.0'):

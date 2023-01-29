@@ -1,7 +1,7 @@
 import json
-import yaml
 from pathlib import Path
 
+import yaml
 
 SWAGGER_UI_PY_ROOT = Path(__file__).resolve().parent
 

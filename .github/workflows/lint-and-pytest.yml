@@ -25,6 +25,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
-    - run: pip install flake8 -r test/requirements.txt
+    - run: pip install flake8 isort -r test/requirements.txt
     - run: flake8
     - run: pytest -s test/
+    - run: isort .
