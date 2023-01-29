@@ -6,9 +6,10 @@ def handler(doc):
     def index():
         return doc.doc_html
 
-    @doc.app.get(doc.swagger_json_uri_absolute)
-    def config_handler():
-        return doc.get_config(request.urlparts.netloc)
+    if doc.config_rel_url is None:
+        @doc.app.get(doc.swagger_json_uri_absolute)
+        def config_handler():
+            return doc.get_config(request.urlparts.netloc)
 
     @doc.app.get(r'{}/<filepath>'.format(doc.static_uri_absolute))
     def java_script_file(filepath):

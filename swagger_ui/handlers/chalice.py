@@ -15,10 +15,11 @@ def handler(doc):
             headers={"Content-Type": "text/html"},
         )
 
-    @bp.route(doc.swagger_json_uri_relative, methods=["GET"])
-    def bp_config_handler():
-        request = doc.app.current_request
-        return doc.get_config(request.headers["host"])
+    if doc.config_rel_url is None:
+        @bp.route(doc.swagger_json_uri_relative, methods=["GET"])
+        def bp_config_handler():
+            request = doc.app.current_request
+            return doc.get_config(request.headers["host"])
 
     if doc.editor:
         @bp.route(doc.editor_uri_relative(slashes=True), methods=["GET"])

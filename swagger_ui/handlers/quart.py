@@ -22,9 +22,10 @@ def handler(doc):
         async def swagger_blueprint_editor_handler():
             return doc.editor_html
 
-    @swagger_blueprint.route(doc.swagger_json_uri_relative, methods=['GET'])
-    async def swagger_blueprint_config_handler():
-        return jsonify(doc.get_config(request.host))
+    if doc.config_rel_url is None:
+        @swagger_blueprint.route(doc.swagger_json_uri_relative, methods=['GET'])
+        async def swagger_blueprint_config_handler():
+            return jsonify(doc.get_config(request.host))
 
     doc.app.register_blueprint(
         blueprint=swagger_blueprint, url_prefix=doc.url_prefix)

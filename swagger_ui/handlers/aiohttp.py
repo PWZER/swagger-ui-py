@@ -21,8 +21,9 @@ def handler(doc):
         doc.app.router.add_get(
             doc.editor_uri_absolute(slashes=False), swagger_editor_handler)
 
-    doc.app.router.add_get(
-        doc.swagger_json_uri_absolute, swagger_config_handler)
+    if doc.config_rel_url is None:
+        doc.app.router.add_get(
+            doc.swagger_json_uri_absolute, swagger_config_handler)
     doc.app.router.add_static(doc.static_uri_absolute, path=doc.static_dir)
 
 
