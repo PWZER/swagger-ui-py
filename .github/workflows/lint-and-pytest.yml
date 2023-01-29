@@ -17,15 +17,15 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.11']
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
     - run: pip install flake8 isort -r test/requirements.txt
     - run: flake8
     - run: pytest -s test/
-    - run: isort .
+    - run: isort --check-only .
