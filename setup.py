@@ -1,15 +1,10 @@
-import platform
-from distutils.version import StrictVersion
 from pathlib import Path
 
 from setuptools import find_packages, setup
 
-if StrictVersion(platform.python_version()) < StrictVersion('3.0.0'):
-    raise Exception("`swagger-ui-py` support python version >= 3.0.0 only.")
-
 setup(
     name='swagger-ui-py',
-    version='22.07.13',
+    version='23.6.15',
     description=(
         'Swagger UI for Python web framework, '
         'such as Tornado, Flask, Quart, Sanic and Falcon.'
@@ -17,6 +12,7 @@ setup(
     long_description=Path(__file__).parent.joinpath('README.md').read_text(),
     long_description_content_type='text/markdown',
     license='Apache License 2.0',
+    python_requires='>=3.0.0',
     packages=find_packages(),
     package_data={
         'swagger_ui': ['static/*', 'templates/*'],

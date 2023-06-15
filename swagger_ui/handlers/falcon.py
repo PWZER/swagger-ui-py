@@ -49,12 +49,12 @@ class FalconInterface(object):
 
 def match(doc):
     try:
-        from distutils.version import StrictVersion
+        from packaging.version import Version
 
         import falcon
 
         interface = None
-        if StrictVersion(falcon.__version__) >= StrictVersion('3.0.0'):
+        if Version(falcon.__version__).major >= 3:
             import falcon.asgi
             if isinstance(doc.app, falcon.asgi.App):
                 interface = FalconInterface(use_async=True)

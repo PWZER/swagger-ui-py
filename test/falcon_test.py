@@ -6,7 +6,7 @@ from common import kwargs_list, mode_list, send_requests
 
 def server_process(port, mode, **kwargs):
     import json
-    from distutils.version import StrictVersion
+    from packaging.version import Version
     from wsgiref import simple_server
 
     import falcon
@@ -15,7 +15,7 @@ def server_process(port, mode, **kwargs):
         def on_get(self, req, resp):
             resp.body = json.dumps({'text': 'Hello World!!!'})
 
-    if StrictVersion(falcon.__version__) < StrictVersion('3.0.0'):
+    if Version(falcon.__version__).major < 3:
         app = falcon.API()
     else:
         app = falcon.App()
