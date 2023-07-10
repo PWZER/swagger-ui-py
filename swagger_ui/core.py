@@ -48,11 +48,11 @@ class ApplicationDocument(object):
         self.config_spec = config_spec
         self.config_rel_url = config_rel_url
         assert (
-            self.config
-            or self.config_url
-            or self.config_path
-            or self.config_spec
-            or self.config_rel_url
+            self.config or
+            self.config_url or
+            self.config_path or
+            self.config_spec or
+            self.config_rel_url
         ), (
             'One of arguments "config", "config_path", "config_url", "config_spec"'
             ' or "config_rel_url" is required!'
