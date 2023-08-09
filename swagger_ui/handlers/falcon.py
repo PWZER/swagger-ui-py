@@ -7,6 +7,7 @@ class FalconInterface(object):
 
     def handler(self, doc):
 
+
         class Handler(object):
             async def on_get_async(self, req, resp):
                 self.on_get(req, resp)
@@ -42,7 +43,7 @@ class FalconInterface(object):
             doc.app.add_route(doc.swagger_json_uri_absolute, SwaggerConfigHandler(), suffix=suffix)
         doc.app.add_static_route(
             prefix=doc.static_uri_absolute,
-            directory='{}/'.format(doc.static_dir),
+            directory=f'{doc.static_dir}/',
             downloadable=True,
         )
 
@@ -60,9 +61,8 @@ def match(doc):
                 interface = FalconInterface(use_async=True)
             elif isinstance(doc.app, falcon.App):
                 interface = FalconInterface(use_async=False)
-        else:
-            if isinstance(doc.app, falcon.API):
-                interface = FalconInterface(use_async=False)
+        elif isinstance(doc.app, falcon.API):
+            interface = FalconInterface(use_async=False)
 
         if interface:
             return interface.handler

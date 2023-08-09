@@ -15,11 +15,7 @@ def server_process(port, mode, **kwargs):
         def on_get(self, req, resp):
             resp.body = json.dumps({'text': 'Hello World!!!'})
 
-    if Version(falcon.__version__).major < 3:
-        app = falcon.API()
-    else:
-        app = falcon.App()
-
+    app = falcon.API() if Version(falcon.__version__).major < 3 else falcon.App()
     app.add_route('/hello/world', HelloWorldResource())
 
     if mode == 'auto':

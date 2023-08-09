@@ -26,4 +26,4 @@ def create_api_doc(app_type):
 
 
 for name in supported_list:
-    setattr(sys.modules[__name__], '{}_api_doc'.format(name), create_api_doc(name))
+    setattr(sys.modules[__name__], f'{name}_api_doc', create_api_doc(name))

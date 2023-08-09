@@ -16,8 +16,11 @@ def handler(doc):
     handlers = [
         (doc.root_uri_absolute(slashes=True), DocHandler),
         (doc.root_uri_absolute(slashes=False), DocHandler),
-        (r'{}/(.+)'.format(doc.static_uri_absolute),
-         StaticFileHandler, {'path': doc.static_dir}),
+        (
+            f'{doc.static_uri_absolute}/(.+)',
+            StaticFileHandler,
+            {'path': doc.static_dir},
+        ),
     ]
 
     if doc.config_rel_url is None:
