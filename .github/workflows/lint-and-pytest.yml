@@ -26,6 +26,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
     - run: pip install flake8 isort -r test/requirements.txt
+    - run: isort --line-width=100 --check-only --force-single-line-imports .
     - run: flake8
     - run: pytest -s test/
-    - run: isort --check-only .

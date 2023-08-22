@@ -1,5 +1,6 @@
 def handler(doc):
-    from quart import Blueprint, request
+    from quart import Blueprint
+    from quart import request
     from quart.json import jsonify
 
     swagger_blueprint = Blueprint(

@@ -1,6 +1,7 @@
 import os
 
-from bottle import Bottle, run
+from bottle import Bottle
+from bottle import run
 
 app = Bottle()
 

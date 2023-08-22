@@ -1,5 +1,6 @@
 def handler(doc):
-    from starlette.responses import HTMLResponse, JSONResponse
+    from starlette.responses import HTMLResponse
+    from starlette.responses import JSONResponse
     from starlette.staticfiles import StaticFiles
 
     async def swagger_doc_handler(request):
