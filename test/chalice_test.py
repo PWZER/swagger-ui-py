@@ -1,7 +1,9 @@
 from multiprocessing import Process
 
 import pytest
-from common import kwargs_list, mode_list, send_requests
+from common import kwargs_list
+from common import mode_list
+from common import send_requests
 
 
 def server_process(port, mode, **kwargs):

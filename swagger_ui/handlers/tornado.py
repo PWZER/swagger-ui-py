@@ -1,5 +1,6 @@
 def handler(doc):
-    from tornado.web import RequestHandler, StaticFileHandler
+    from tornado.web import RequestHandler
+    from tornado.web import StaticFileHandler
 
     class DocHandler(RequestHandler):
         def get(self, *args, **kwargs):

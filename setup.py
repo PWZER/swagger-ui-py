@@ -2,7 +2,8 @@ import platform
 from distutils.version import StrictVersion
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import find_packages
+from setuptools import setup
 
 if StrictVersion(platform.python_version()) < StrictVersion('3.0.0'):
     raise Exception("`swagger-ui-py` support python version >= 3.0.0 only.")

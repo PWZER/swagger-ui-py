@@ -5,10 +5,13 @@ import urllib.request
 from distutils.version import StrictVersion
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
+from jinja2 import select_autoescape
 
 from swagger_ui.handlers import supported_list
-from swagger_ui.utils import SWAGGER_UI_PY_ROOT, _load_config
+from swagger_ui.utils import SWAGGER_UI_PY_ROOT
+from swagger_ui.utils import _load_config
 
 _DefaultSwaggerUIBundleParameters = {
     "dom_id": "\"#swagger-ui\"",

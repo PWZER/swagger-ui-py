@@ -1,7 +1,9 @@
 def handler(doc):
     from pathlib import Path
 
-    from chalice import Blueprint, NotFoundError, Response
+    from chalice import Blueprint
+    from chalice import NotFoundError
+    from chalice import Response
 
     cur_dir = Path(__file__).resolve().parent
     static_dir = cur_dir.parent.joinpath("static")

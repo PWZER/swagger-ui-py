@@ -1,6 +1,7 @@
 import os
 
-from sanic import Sanic, response
+from sanic import Sanic
+from sanic import response
 
 app = Sanic(__name__)
 
