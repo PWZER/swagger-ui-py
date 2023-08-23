@@ -1,49 +1,73 @@
-from multiprocessing import Process
+from distutils.version import StrictVersion
 
+import falcon
 import pytest
-from common import kwargs_list
-from common import mode_list
-from common import send_requests
+from falcon import testing
+
+from swagger_ui import api_doc
+from swagger_ui import falcon_api_doc
+
+from .common import config_content
+from .common import parametrize_list
 
 
-def server_process(port, mode, **kwargs):
-    import json
-    from packaging.version import Version
-    from wsgiref import simple_server
-
-    import falcon
-
-    class HelloWorldResource(object):
+@pytest.fixture
+def app():
+    class HelloWorldHandler(object):
         def on_get(self, req, resp):
-            resp.body = json.dumps({'text': 'Hello World!!!'})
+            resp.body = "Hello World!!!"
 
-    app = falcon.API() if Version(falcon.__version__).major < 3 else falcon.App()
-    app.add_route('/hello/world', HelloWorldResource())
-
-    if mode == 'auto':
-        from swagger_ui import api_doc
-        api_doc(app, **kwargs)
+    if StrictVersion(falcon.__version__) < StrictVersion("3.0.0"):
+        app = falcon.API()
     else:
-        from swagger_ui import falcon_api_doc
-        falcon_api_doc(app, **kwargs)
+        app = falcon.App()
 
-    httpd = simple_server.make_server('localhost', port, app)
-    httpd.serve_forever()
+    app.add_route("/hello/world", HelloWorldHandler())
+    return app
 
 
-@pytest.mark.parametrize('mode', mode_list)
-@pytest.mark.parametrize('kwargs', kwargs_list)
-def test_falcon(port, mode, kwargs):
-    if kwargs['url_prefix'] in ('', '/'):
+@pytest.mark.parametrize("mode, kwargs", parametrize_list)
+def test_falcon(app, mode, kwargs):
+    if kwargs["url_prefix"] in ("", "/"):
         return
 
-    proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
-    proc.start()
-    send_requests(port, mode, kwargs)
-    proc.terminate()
+    if kwargs.get("config_rel_url"):
 
+        class SwaggerConfigHandler(object):
+            def on_get(self, req, resp):
+                resp.body = config_content
 
-if __name__ == '__main__':
-    kwargs = dict(url_prefix='/api/doc', config_path='conf/test3.yaml')
-    # server_process(8090, 'auto', **kwargs)
-    server_process(8090, None, **kwargs)
+        app.add_route(kwargs["config_rel_url"], SwaggerConfigHandler())
+
+    if mode == "auto":
+        api_doc(app, **kwargs)
+    else:
+        falcon_api_doc(app, **kwargs)
+
+    url_prefix = kwargs["url_prefix"]
+    if url_prefix.endswith("/"):
+        url_prefix = url_prefix[:-1]
+
+    client = testing.TestClient(app)
+
+    resp = client.get("/hello/world")
+    assert resp.status_code == 200, resp.text
+
+    resp = client.get(url_prefix)
+    assert resp.status_code == 200, resp.text
+
+    resp = client.get(f"{url_prefix}/static/LICENSE")
+    assert resp.status_code == 200, resp.text
+
+    resp = client.get(f"{url_prefix}/editor")
+    if kwargs.get("editor"):
+        assert resp.status_code == 200, resp.text
+    else:
+        assert resp.status_code == 404, resp.text
+
+    if kwargs.get("config_rel_url"):
+        resp = client.get(kwargs["config_rel_url"])
+        assert resp.status_code == 200, resp.text
+    else:
+        resp = client.get(f"{url_prefix}/swagger.json")
+        assert resp.status_code == 200, resp.text

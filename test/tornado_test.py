@@ -1,15 +1,18 @@
-from multiprocessing import Process
-
 import pytest
-from common import kwargs_list
-from common import mode_list
-from common import send_requests
+import tornado.httpclient
+import tornado.httpserver
+import tornado.ioloop
+import tornado.web
+
+from swagger_ui import api_doc
+from swagger_ui import tornado_api_doc
+
+from .common import config_content
+from .common import parametrize_list
 
 
-def server_process(port, mode, **kwargs):
-    import tornado.ioloop
-    import tornado.web
-
+@pytest.fixture
+def app():
     class HelloWorldHandler(tornado.web.RequestHandler):
         def get(self, *args, **kwargs):
             return self.write('Hello World!!!')
@@ -17,22 +20,57 @@ def server_process(port, mode, **kwargs):
     app = tornado.web.Application([
         (r'/hello/world', HelloWorldHandler),
     ])
+    return app
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('mode, kwargs', parametrize_list)
+async def test_tornado(app, mode, kwargs):
+    if kwargs.get('config_rel_url'):
+        class SwaggerConfigHandler(tornado.web.RequestHandler):
+            def get(self, *args, **kwargs):
+                return self.write(config_content)
+        app.add_handlers('.*', [(kwargs['config_rel_url'], SwaggerConfigHandler)])
 
     if mode == 'auto':
-        from swagger_ui import api_doc
         api_doc(app, **kwargs)
     else:
-        from swagger_ui import tornado_api_doc
         tornado_api_doc(app, **kwargs)
 
-    app.listen(address='localhost', port=port)
-    tornado.ioloop.IOLoop.current().start()
+    server = tornado.httpserver.HTTPServer(app)
+    server.listen(0)
 
+    host, port = list(server._sockets.values())[0].getsockname()
+    server_addr = f'http://{host}:{port}'
 
-@pytest.mark.parametrize('mode', mode_list)
-@pytest.mark.parametrize('kwargs', kwargs_list)
-def test_tornado(port, mode, kwargs):
-    proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
-    proc.start()
-    send_requests(port, mode, kwargs)
-    proc.terminate()
+    url_prefix = kwargs['url_prefix']
+    if url_prefix.endswith('/'):
+        url_prefix = url_prefix[:-1]
+    url_prefix = f'{server_addr}{url_prefix}'
+
+    http_client = tornado.httpclient.AsyncHTTPClient()
+
+    resp = await http_client.fetch(f'{server_addr}/hello/world')
+    assert resp.code == 200, resp.body
+
+    resp = await http_client.fetch(url_prefix)
+    assert resp.code == 200, resp.body
+
+    resp = await http_client.fetch(f'{url_prefix}/static/LICENSE')
+    assert resp.code == 200, resp.body
+
+    if kwargs.get('editor'):
+        resp = await http_client.fetch(f'{url_prefix}/editor')
+        assert resp.code == 200, resp.body
+    else:
+        try:
+            resp = await http_client.fetch(f'{url_prefix}/editor')
+        except tornado.httpclient.HTTPClientError as e:
+            assert e.code == 404, e.response.body
+
+    if kwargs.get('config_rel_url'):
+        resp = await http_client.fetch(server_addr + kwargs['config_rel_url'])
+        assert resp.code == 200, resp.body
+    else:
+        resp = await http_client.fetch(f'{url_prefix}/swagger.json')
+        assert resp.code == 200, resp.body

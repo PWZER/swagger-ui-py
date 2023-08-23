@@ -1,40 +1,79 @@
-from multiprocessing import Process
-
 import pytest
-from common import kwargs_list
-from common import mode_list
-from common import send_requests
+from chalice import Chalice
+from chalice.config import Config
+from chalice.local import ForbiddenError
+from chalice.local import LocalGateway
+
+from swagger_ui import api_doc
+from swagger_ui import chalice_api_doc
+
+from .common import config_content
+from .common import parametrize_list
 
 
-def server_process(port, mode, **kwargs):
-    from chalice import Chalice
-    from chalice.config import Config
-    from chalice.local import create_local_server
-
+@pytest.fixture
+def app():
     app = Chalice(__name__)
 
     @app.route('/hello/world')
-    def index():
-        return {'hello': 'world'}
+    def hello():
+        return 'Hello World!!!'
+    return app
+
+
+@pytest.mark.parametrize('mode, kwargs', parametrize_list)
+def test_chalice(app, mode, kwargs):
+    if kwargs.get('config_rel_url'):
+        @app.route(kwargs['config_rel_url'])
+        def swagger_config_handler():
+            return config_content
 
     if mode == 'auto':
-        from swagger_ui import api_doc
         api_doc(app, **kwargs)
     else:
-        from swagger_ui import chalice_api_doc
         chalice_api_doc(app, **kwargs)
 
-    config = Config()
-    create_local_server(app, config, 'localhost', port).serve_forever()
+    url_prefix = kwargs['url_prefix']
+    if url_prefix.endswith('/'):
+        url_prefix = url_prefix[:-1]
 
+    client = LocalGateway(app, config=Config())
 
-@pytest.mark.parametrize('mode', mode_list)
-@pytest.mark.parametrize('kwargs', kwargs_list)
-def test_chalice(port, mode, kwargs):
-    if kwargs['url_prefix'] in ('/', ''):
-        return
+    headers = {'Host': 'localhost'}
 
-    proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
-    proc.start()
-    send_requests(port, mode, kwargs)
-    proc.terminate()
+    resp = client.handle_request(
+        method='GET', path='/hello/world', headers=headers, body=None)
+    assert resp['statusCode'] == 200, resp['body']
+
+    resp = client.handle_request(
+        method='GET', path=url_prefix, headers=headers, body=None)
+    assert resp['statusCode'] == 200, resp['body']
+
+    resp = client.handle_request(
+        method='GET', path=f'{url_prefix}/static/LICENSE',
+        headers=headers, body=None)
+    assert resp['statusCode'] == 200, resp['body']
+
+    if kwargs.get('editor'):
+        resp = client.handle_request(
+            method='GET', path=f'{url_prefix}/editor',
+            headers=headers, body=None)
+        assert resp['statusCode'] == 200, resp['body']
+    else:
+        try:
+            resp = client.handle_request(
+                method='GET', path=f'{url_prefix}/editor',
+                headers=headers, body=None)
+        except ForbiddenError as ex:
+            assert "Missing Authentication Token" in str(ex), str(ex)
+
+    if kwargs.get('config_rel_url'):
+        resp = client.handle_request(
+            method='GET', path=kwargs['config_rel_url'],
+            headers=headers, body=None)
+        assert resp['statusCode'] == 200, resp['body']
+    else:
+        resp = client.handle_request(
+            method='GET', path=f'{url_prefix}/swagger.json',
+            headers=headers, body=None)
+        assert resp['statusCode'] == 200, resp['body']
