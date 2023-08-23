@@ -4,6 +4,7 @@ chalice
 falcon
 flask
 pytest
+pytest-aiohttp
 quart
 requests
 sanic
@@ -11,3 +12,4 @@ sanic-testing
 starlette
 tornado
 uvicorn
+webtest
