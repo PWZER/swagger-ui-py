@@ -1,37 +1,62 @@
-from multiprocessing import Process
-
 import pytest
-from common import kwargs_list
-from common import mode_list
-from common import send_requests
+from flask import Flask
+
+from swagger_ui import api_doc
+from swagger_ui import flask_api_doc
+
+from .common import config_content
+from .common import parametrize_list
 
 
-def server_process(port, mode, **kwargs):
-    from flask import Flask
-
+@pytest.fixture
+def app():
     app = Flask(__name__)
 
     @app.route(r'/hello/world')
     def hello():
         return 'Hello World!!!'
-
-    if mode == 'auto':
-        from swagger_ui import api_doc
-        api_doc(app, **kwargs)
-    else:
-        from swagger_ui import flask_api_doc
-        flask_api_doc(app, **kwargs)
-
-    app.run(host='localhost', port=port)
+    return app
 
 
-@pytest.mark.parametrize('mode', mode_list)
-@pytest.mark.parametrize('kwargs', kwargs_list)
-def test_flask(port, mode, kwargs):
+@pytest.mark.parametrize('mode, kwargs', parametrize_list)
+def test_flask(app, mode, kwargs):
     if kwargs['url_prefix'] in ('/', ''):
         return
 
-    proc = Process(target=server_process, args=(port, mode), kwargs=kwargs)
-    proc.start()
-    send_requests(port, mode, kwargs)
-    proc.terminate()
+    if kwargs.get('config_rel_url'):
+        @app.route(kwargs['config_rel_url'])
+        def swagger_config():
+            return config_content
+
+    if mode == 'auto':
+        api_doc(app, **kwargs)
+    else:
+        flask_api_doc(app, **kwargs)
+
+    url_prefix = kwargs['url_prefix']
+    if url_prefix.endswith('/'):
+        url_prefix = url_prefix[:-1]
+
+    client = app.test_client()
+
+    resp = client.get('/hello/world')
+    assert resp.status_code == 200, resp.data
+
+    resp = client.get(url_prefix)
+    assert resp.status_code == 200, resp.data
+
+    resp = client.get(f'{url_prefix}/static/LICENSE')
+    assert resp.status_code == 200, resp.data
+
+    resp = client.get(f'{url_prefix}/editor')
+    if kwargs.get('editor'):
+        assert resp.status_code == 200, resp.data
+    else:
+        assert resp.status_code == 404, resp.data
+
+    if kwargs.get('config_rel_url'):
+        resp = client.get(kwargs['config_rel_url'])
+        assert resp.status_code == 200, resp.data
+    else:
+        resp = client.get(f'{url_prefix}/swagger.json')
+        assert resp.status_code == 200, resp.data
