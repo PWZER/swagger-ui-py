@@ -10,7 +10,7 @@ if StrictVersion(platform.python_version()) < StrictVersion('3.0.0'):
 
 setup(
     name='swagger-ui-py',
-    version='22.07.13',
+    version='23.08.23',
     description=(
         'Swagger UI for Python web framework, '
         'such as Tornado, Flask, Quart, Sanic and Falcon.'
