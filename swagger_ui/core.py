@@ -154,6 +154,7 @@ class ApplicationDocument(object):
                 server["url"] = server["url"]
         elif "host" not in config:
             config["host"] = host
+
         return config
 
     def match_handler(self):
