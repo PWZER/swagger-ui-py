@@ -2,12 +2,12 @@ import copy
 import importlib
 import re
 import urllib.request
-from distutils.version import StrictVersion
 from pathlib import Path
 
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 from jinja2 import select_autoescape
+from packaging.version import Version
 
 from swagger_ui.handlers import supported_list
 from swagger_ui.utils import SWAGGER_UI_PY_ROOT
@@ -144,7 +144,7 @@ class ApplicationDocument(object):
             config = _load_config(self.config_spec)
 
         version = config.get('openapi', '2.0.0')
-        if StrictVersion(version) >= StrictVersion('3.0.0'):
+        if Version(version) >= Version('3.0.0'):
             for server in config.get('servers', []):
                 server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?',
                                        '//{}/'.format(host), server['url'])

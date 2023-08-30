@@ -1,8 +1,7 @@
-from distutils.version import StrictVersion
-
 import falcon
 import pytest
 from falcon import testing
+from packaging.version import Version
 
 from swagger_ui import api_doc
 from swagger_ui import falcon_api_doc
@@ -17,7 +16,7 @@ def app():
         def on_get(self, req, resp):
             resp.body = 'Hello World!!!'
 
-    if StrictVersion(falcon.__version__) < StrictVersion('3.0.0'):
+    if Version(falcon.__version__) < Version('3.0.0'):
         app = falcon.API()
     else:
         app = falcon.App()

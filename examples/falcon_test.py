@@ -1,9 +1,9 @@
 import json
 import os
-from distutils.version import StrictVersion
 from wsgiref import simple_server
 
 import falcon
+from packaging.version import Version
 
 
 class HelloWorldResource(object):
@@ -11,7 +11,7 @@ class HelloWorldResource(object):
         resp.body = json.dumps({'text': 'Hello World!!!'})
 
 
-if StrictVersion(falcon.__version__) < StrictVersion('3.0.0'):
+if Version(falcon.__version__) < Version('3.0.0'):
     app = falcon.API()
 else:
     app = falcon.App()

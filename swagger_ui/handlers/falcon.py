@@ -1,5 +1,7 @@
 import json
 
+from packaging.version import Version
+
 
 class FalconInterface(object):
     def __init__(self, use_async=False):
@@ -49,12 +51,10 @@ class FalconInterface(object):
 
 def match(doc):
     try:
-        from distutils.version import StrictVersion
-
         import falcon
 
         interface = None
-        if StrictVersion(falcon.__version__) >= StrictVersion('3.0.0'):
+        if Version(falcon.__version__) >= Version('3.0.0'):
             import falcon.asgi
             if isinstance(doc.app, falcon.asgi.App):
                 interface = FalconInterface(use_async=True)
