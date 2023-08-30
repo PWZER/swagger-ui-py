@@ -1,6 +1,5 @@
 import copy
 import importlib
-import re
 import urllib.request
 from pathlib import Path
 
@@ -142,12 +141,13 @@ class ApplicationDocument(object):
                 config = _load_config(config_file.read())
         elif self.config_spec:
             config = _load_config(self.config_spec)
+        else:
+            raise RuntimeError('No config found!')
 
         version = config.get('openapi', '2.0.0')
         if Version(version) >= Version('3.0.0'):
             for server in config.get('servers', []):
-                server['url'] = re.sub(r'//[a-z0-9\-\.:]+/?',
-                                       '//{}/'.format(host), server['url'])
+                server['url'] = server['url']
         elif 'host' not in config:
             config['host'] = host
         return config
