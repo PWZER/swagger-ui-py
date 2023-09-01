@@ -6,7 +6,6 @@ from pathlib import Path
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 from jinja2 import select_autoescape
-from packaging.version import Version
 
 from swagger_ui.handlers import supported_list
 from swagger_ui.utils import SWAGGER_UI_PY_ROOT
@@ -144,11 +143,7 @@ class ApplicationDocument(object):
         else:
             raise RuntimeError('No config found!')
 
-        version = config.get('openapi', '2.0.0')
-        if Version(version) >= Version('3.0.0'):
-            for server in config.get('servers', []):
-                server['url'] = server['url']
-        elif 'host' not in config:
+        if 'host' not in config:
             config['host'] = host
         return config
 
