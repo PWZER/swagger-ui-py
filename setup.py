@@ -1,4 +1,3 @@
-import platform
 from pathlib import Path
 
 from setuptools import find_packages
@@ -7,7 +6,7 @@ from setuptools import setup
 setup(
     name='swagger-ui-py',
     version='23.8.23',
-    python_requires='>3.8.0',
+    python_requires='>3.0.0',
     description=(
         'Swagger UI for Python web framework, '
         'such as Tornado, Flask, Quart, Sanic and Falcon.'
