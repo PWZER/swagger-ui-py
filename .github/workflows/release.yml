@@ -1,0 +1,33 @@
+name: Releases
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+        run: |
+          python setup.py sdist
+          python setup.py bdist_wheel
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          artifacts: "dist/*.whl,dist/*.tar.gz"
+          generateReleaseNotes: true
