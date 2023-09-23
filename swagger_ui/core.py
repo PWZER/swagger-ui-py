@@ -143,7 +143,7 @@ class ApplicationDocument(object):
         else:
             raise RuntimeError('No config found!')
 
-        if 'host' not in config:
+        if 'host' not in config and self.extra_config.get('host_inject', True):
             config['host'] = host
         return config
 

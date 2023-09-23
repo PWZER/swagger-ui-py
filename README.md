@@ -104,6 +104,7 @@ python3 -c "from swagger_ui import supported_list; print(supported_list)"
   from swagger_ui import falcon_api_doc
   falcon_api_doc(app, config_path='./conf/test.yaml', url_prefix='/api/doc', title='API doc')
   ```
+  Passing a value to the keyword argument `host_inject` will disable the behaviour which injects a host value into the specification served by Swagger UI.
 
 - Edit `Swagger` config file (JSON or YAML)
 
