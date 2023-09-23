@@ -5,8 +5,8 @@ from setuptools import setup
 
 setup(
     name='swagger-ui-py',
-    version='23.8.23',
-    python_requires='>3.0.0',
+    version='23.9.23',
+    python_requires='>=3.0.0',
     description=(
         'Swagger UI for Python web framework, '
         'such as Tornado, Flask, Quart, Sanic and Falcon.'
@@ -20,6 +20,7 @@ setup(
     },
     install_requires=[
         "jinja2>=2.0",
+        "packaging>=20.0",
         "PyYaml>=5.0",
     ],
     url='https://github.com/PWZER/swagger-ui-py',
