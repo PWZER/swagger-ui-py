@@ -172,4 +172,4 @@ class ApplicationDocument(object):
         file_name = split_path.pop()
         relative_prefix = split_path.pop()
         swagger_url_relative = "/".join([relative_prefix, file_name])
-        self.parameters["url"] = "\"{}\"".format(swagger_url_relative)
+        self.parameters["url"] = f'"{swagger_url_relative}"'
