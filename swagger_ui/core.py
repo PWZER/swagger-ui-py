@@ -3,10 +3,13 @@ import importlib
 import urllib.request
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
+from jinja2 import select_autoescape
 
 from swagger_ui.handlers import supported_list
-from swagger_ui.utils import SWAGGER_UI_PY_ROOT, _load_config
+from swagger_ui.utils import SWAGGER_UI_PY_ROOT
+from swagger_ui.utils import _load_config
 
 _DefaultSwaggerUIBundleParameters = {
     "dom_id": "\"#swagger-ui\"",
@@ -46,10 +49,8 @@ class ApplicationDocument(object):
         self.config_path = config_path
         self.config_spec = config_spec
         self.config_rel_url = config_rel_url
-        assert (
-                    self.config or self.config_url or self.config_path or
-                    self.config_spec or
-                    self.config_rel_url), \
+        assert (self.config or self.config_url or self.config_path or self.config_spec or
+                self.config_rel_url), \
             'One of arguments "config", "config_path", "config_url", "config_spec"' \
             ' or "config_rel_url" is required!'
 
