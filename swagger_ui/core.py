@@ -3,13 +3,10 @@ import importlib
 import urllib.request
 from pathlib import Path
 
-from jinja2 import Environment
-from jinja2 import FileSystemLoader
-from jinja2 import select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from swagger_ui.handlers import supported_list
-from swagger_ui.utils import SWAGGER_UI_PY_ROOT
-from swagger_ui.utils import _load_config
+from swagger_ui.utils import SWAGGER_UI_PY_ROOT, _load_config
 
 _DefaultSwaggerUIBundleParameters = {
     "dom_id": "\"#swagger-ui\"",
@@ -49,8 +46,10 @@ class ApplicationDocument(object):
         self.config_path = config_path
         self.config_spec = config_spec
         self.config_rel_url = config_rel_url
-        assert (self.config or self.config_url or self.config_path or self.config_spec or
-                self.config_rel_url), \
+        assert (
+                    self.config or self.config_url or self.config_path or
+                    self.config_spec or
+                    self.config_rel_url), \
             'One of arguments "config", "config_path", "config_url", "config_spec"' \
             ' or "config_rel_url" is required!'
 
@@ -58,7 +57,7 @@ class ApplicationDocument(object):
         self.parameters = copy.deepcopy(_DefaultSwaggerUIBundleParameters)
         if parameters:
             self.parameters.update(parameters)
-        self.parameters["url"] = "\"{}\"".format(self.swagger_json_uri_absolute)
+        self.set_swagger_url()
 
         # oauth2_config
         self.oauth2_config = oauth2_config
@@ -164,3 +163,12 @@ class ApplicationDocument(object):
             if handler:
                 return handler
         return None
+
+    def set_swagger_url(self):
+        """Set relative swagger url."""
+        swagger_url_absolute = self.swagger_json_uri_absolute
+        split_path = swagger_url_absolute.split("/")
+        file_name = split_path.pop()
+        relative_prefix = split_path.pop()
+        swagger_url_relative = "/".join([relative_prefix, file_name])
+        self.parameters["url"] = "\"{}\"".format(swagger_url_relative)
