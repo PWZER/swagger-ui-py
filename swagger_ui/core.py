@@ -79,8 +79,10 @@ class ApplicationDocument(object):
 
     @property
     def doc_html(self):
+        prefix_split = self.url_prefix.split("/")
+        static_location = prefix_split.pop()
         return self.env.get_template('doc.html').render(
-            url_prefix=self.url_prefix,
+            url_prefix=static_location,
             title=self.title,
             config_url=self.swagger_json_uri_absolute,
             parameters=self.parameters,
