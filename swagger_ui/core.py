@@ -167,8 +167,7 @@ class ApplicationDocument(object):
 
     def set_swagger_url(self):
         """Set relative swagger url."""
-        swagger_url_absolute = self.swagger_json_uri_absolute
-        split_path = swagger_url_absolute.split("/")
+        split_path = self.swagger_json_uri_absolute.split("/")
         file_name = split_path.pop()
         relative_prefix = split_path.pop()
         swagger_url_relative = "/".join([relative_prefix, file_name])
