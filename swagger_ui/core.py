@@ -31,6 +31,7 @@ class ApplicationDocument(object):
                  config_url=None,
                  config_spec=None,
                  config_rel_url=None,
+                 custom_css=None,
                  url_prefix=r'/api/doc',
                  title='API doc',
                  editor=False,
@@ -49,6 +50,7 @@ class ApplicationDocument(object):
         self.config_path = config_path
         self.config_spec = config_spec
         self.config_rel_url = config_rel_url
+        self.custom_css = custom_css
         assert (self.config or self.config_url or self.config_path or self.config_spec or
                 self.config_rel_url), \
             'One of arguments "config", "config_path", "config_url", "config_spec"' \
@@ -85,6 +87,7 @@ class ApplicationDocument(object):
             config_url=self.swagger_json_uri_absolute,
             parameters=self.parameters,
             oauth2_config=self.oauth2_config,
+            custom_css=self.custom_css,
         )
 
     @property
