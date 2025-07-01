@@ -5,6 +5,8 @@ import re
 import shutil
 import tarfile
 from pathlib import Path
+from djlint.reformat import formatter
+from djlint import Config
 
 import requests
 
@@ -49,7 +51,8 @@ def detect_latest_release(repo):
     print('detect latest release')
     resp = requests.get(
         'https://api.github.com/repos/{}/releases/latest'.format(repo),
-        timeout=120)
+        timeout=120
+    )
     latest = json.loads(resp.text)
     tag = latest['tag_name']
     print('{} latest version is {}'.format(repo, tag))
@@ -134,9 +137,15 @@ def replace_html_content():
             html = re.sub(r'<script .*/swagger-initializer.js".*</script>',
                           '<script>\n{}\n</script>'.format(DOC_HTML_JAVASCRIPT),
                           html)
+            if 'href="{{ custom_css }}"' not in html:
+                html = re.sub(
+                    r'</head>',
+                    '{% if custom_css %}<link rel="stylesheet" type="text/css" href="{{ custom_css }}" />{% endif %}</head>',
+                    html
+                )
 
         with html_path.open('w') as html_file:
-            html_file.write(html)
+            html_file.write(formatter(Config("-"), html))
 
 
 def replace_readme(ui_version, editor_version):
