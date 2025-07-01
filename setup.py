@@ -1,12 +1,24 @@
-import os
+import re
+import subprocess
 from pathlib import Path
 
 from setuptools import find_packages
 from setuptools import setup
 
+
+def get_version():
+    version = subprocess.check_output(
+        ["git", "describe", "--tags", "--always"]).decode("utf-8").strip()
+    if version.startswith("v"):
+        version = version[1:]
+    version = re.sub(r"-[0-9]+-g", "+", version)
+    print(version)
+    return version
+
+
 setup(
     name='swagger-ui-py',
-    version=os.environ.get('VERSION', '0.5.0.dev'),
+    version=get_version(),
     python_requires='>=3.0.0',
     description=(
         'Swagger UI for Python web framework, '

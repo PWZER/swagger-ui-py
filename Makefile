@@ -8,7 +8,7 @@ format-check:
 	@autopep8 --recursive --max-line-length 100 --diff --ignore-local-config .
 	@isort --line-width=100 --force-single-line-imports --check .
 
-build:
+whl:
 	@rm -rf ./dist/*
 	@python3 setup.py bdist_wheel
 
@@ -16,7 +16,7 @@ pytest:
 	@python3 -m pip install --disable-pip-version-check --no-cache-dir -r test/requirements.txt
 	@pytest -s test/
 
-install: build
+install: whl
 	@python3 -m pip uninstall -y swagger-ui-py > /dev/null 2>/dev/null
 	@python3 -m pip install --disable-pip-version-check --no-cache-dir -r test/requirements.txt
 	@python3 -m pip install --disable-pip-version-check --no-cache-dir dist/swagger_ui_py-*.whl
