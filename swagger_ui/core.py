@@ -73,7 +73,7 @@ class ApplicationDocument(object):
 
     @property
     def blueprint_name(self):
-        return 'bp{}'.format(self.url_prefix.replace('/', '_'))
+        return 'bp{}'.format(self.url_prefix.replace('/', '_').replace('.', '_'))
 
     @property
     def static_dir(self):
