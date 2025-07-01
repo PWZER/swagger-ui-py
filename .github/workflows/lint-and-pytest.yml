@@ -14,7 +14,7 @@ on:
 
 jobs:
   lint-and-pytest:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.11']
@@ -25,7 +25,5 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
-    - run: pip install flake8 isort -r test/requirements.txt
-    - run: isort --line-width=100 --check-only --force-single-line-imports .
-    - run: flake8
+    - run: make format-check
     - run: pytest -s test/
