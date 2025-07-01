@@ -20,3 +20,7 @@ install: build
 	@python3 -m pip uninstall -y swagger-ui-py > /dev/null 2>/dev/null
 	@python3 -m pip install --disable-pip-version-check --no-cache-dir -r test/requirements.txt
 	@python3 -m pip install --disable-pip-version-check --no-cache-dir dist/swagger_ui_py-*.whl
+
+upload:
+	@python3 -m pip install --disable-pip-version-check --no-cache-dir twine
+	@twine upload dist/swagger_ui_py-*.whl
