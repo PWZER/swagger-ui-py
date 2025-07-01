@@ -14,7 +14,10 @@ from .common import parametrize_list
 def app():
     class HelloWorldHandler(object):
         def on_get(self, req, resp):
-            resp.body = 'Hello World!!!'
+            if Version(falcon.__version__) >= Version('4.0.0'):
+                resp.data = b'Hello World!!!'
+            else:
+                resp.body = 'Hello World!!!'
 
     if Version(falcon.__version__) < Version('3.0.0'):
         app = falcon.API()
@@ -33,7 +36,10 @@ def test_falcon(app, mode, kwargs):
     if kwargs.get('config_rel_url'):
         class SwaggerConfigHandler(object):
             def on_get(self, req, resp):
-                resp.body = config_content
+                if Version(falcon.__version__) >= Version('4.0.0'):
+                    resp.media = config_content
+                else:
+                    resp.body = config_content
         app.add_route(kwargs['config_rel_url'], SwaggerConfigHandler())
 
     if mode == 'auto':

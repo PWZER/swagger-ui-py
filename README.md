@@ -155,10 +155,10 @@ python3 -c "from swagger_ui import supported_list; print(supported_list)"
   For details about OAuth2 configuration, see the official documentation [OAuth2 Configuration](https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/).
 
 ## Swagger UI
-Swagger UI version is `v5.17.14`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
+Swagger UI version is `v5.25.3`. see [https://github.com/swagger-api/swagger-ui](https://github.com/swagger-api/swagger-ui).
 
 ## Swagger Editor
-Swagger Editor version is `v4.13.1`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
+Swagger Editor version is `v4.14.6`. see [https://github.com/swagger-api/swagger-editor](https://github.com/swagger-api/swagger-editor).
 
 ## Update
 You can update swagger ui and swagger editor version with

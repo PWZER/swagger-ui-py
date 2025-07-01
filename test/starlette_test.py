@@ -39,7 +39,7 @@ def test_starlette(app, mode, kwargs):
     if url_prefix.endswith('/'):
         url_prefix = url_prefix[:-1]
 
-    client = TestClient(app)
+    client = TestClient(app=app)
 
     resp = client.get('/hello/world')
     assert resp.status_code == 200, resp.text

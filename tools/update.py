@@ -5,10 +5,10 @@ import re
 import shutil
 import tarfile
 from pathlib import Path
-from djlint.reformat import formatter
-from djlint import Config
 
 import requests
+from djlint import Config
+from djlint.reformat import formatter
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--ui', action='store_true',
