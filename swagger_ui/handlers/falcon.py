@@ -1,5 +1,3 @@
-import json
-
 from packaging.version import Version
 
 
@@ -16,17 +14,17 @@ class FalconInterface(object):
         class SwaggerDocHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
-                resp.body = doc.doc_html
+                resp.data = doc.doc_html.encode()
 
         class SwaggerEditorHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'text/html'
-                resp.body = doc.editor_html
+                resp.data = doc.editor_html.encode()
 
         class SwaggerConfigHandler(Handler):
             def on_get(self, req, resp):
                 resp.content_type = 'application/json'
-                resp.body = json.dumps(doc.get_config(f'{req.host}:{req.port}'))
+                resp.media = doc.get_config(f'{req.host}:{req.port}')
 
         suffix = 'async' if self.use_async else None
         doc.app.add_route(doc.root_uri_absolute(slashes=True),
