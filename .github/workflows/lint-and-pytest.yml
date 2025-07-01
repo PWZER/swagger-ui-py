@@ -26,4 +26,4 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - run: python setup.py install
     - run: make format-check
-    - run: pytest -s test/
+    - run: make pytest
