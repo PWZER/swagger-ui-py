@@ -166,3 +166,7 @@ You can update swagger ui and swagger editor version with
 ```bash
 tox -e update
 ```
+
+## Contributing
+
+If you are interested in becoming the developer or maintainer of this project, please contact me by email.
