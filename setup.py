@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from setuptools import find_packages
@@ -5,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='swagger-ui-py',
-    version='23.9.23',
+    version=os.environ.get('VERSION', '0.5.0.dev'),
     python_requires='>=3.0.0',
     description=(
         'Swagger UI for Python web framework, '
